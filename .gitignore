@@ -1,3 +1,5 @@
+venv/
+env/
 sihenv/
 
 # Byte-compiled / optimized / DLL files
