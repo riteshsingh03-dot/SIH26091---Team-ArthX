@@ -1,42 +1,81 @@
 from engines.financial.exceptions import InvalidFinancialInput
 
-def calculate_emi(principal: float, annual_rate_pct: float, tenure_months: int) -> float:
+PERIODS_PER_YEAR = {"monthly": 12, "quarterly": 4}
+
+def generate_repayment_schedule(
+    principal: float,
+    annual_rate_pct: float,
+    tenure_months: int,
+    moratorium_months: int = 0,
+    frequency: str = "monthly",
+    capitalize_moratorium_interest: bool = True
+) -> tuple[list[dict], float]:
+    """
+    frequency: 'monthly' or 'quarterly'
+    Returns (schedule, installment_amount)
+    """
+    if frequency not in PERIODS_PER_YEAR:
+        raise InvalidFinancialInput("frequency must be 'monthly' or 'quarterly'")
     if principal <= 0 or tenure_months <= 0:
         raise InvalidFinancialInput("principal and tenure_months must be positive")
     if annual_rate_pct < 0:
         raise InvalidFinancialInput("annual_rate_pct cannot be negative")
-    r = annual_rate_pct / 12 / 100
-    if r == 0:
-        return round(principal / tenure_months, 2)
-    emi = principal * r * (1 + r)**tenure_months / ((1 + r)**tenure_months - 1)
-    return round(emi, 2)
 
-def generate_repayment_schedule(principal: float, annual_rate_pct: float, tenure_months: int, moratorium_months: int = 0) -> list[dict]:
-    """
-    Returns list of dicts: {month, opening_balance, interest, principal_paid, emi, closing_balance}
-    During moratorium: interest accrues and capitalizes into principal, no EMI paid.
-    After moratorium: standard EMI on the (possibly increased) principal, over remaining tenure.
-    """
+    periods_per_year = PERIODS_PER_YEAR[frequency]
+    months_per_period = 12 // periods_per_year          # 1 for monthly, 3 for quarterly
+    if moratorium_months % months_per_period != 0 or tenure_months % months_per_period != 0:
+        raise InvalidFinancialInput(
+            f"moratorium_months and tenure_months must be multiples of {months_per_period} for {frequency} frequency"
+        )
+    period_rate = (annual_rate_pct / 100) / periods_per_year
+
+    total_periods = tenure_months // months_per_period
+    moratorium_periods = moratorium_months // months_per_period
+    repayment_periods = total_periods - moratorium_periods
+
+    if repayment_periods <= 0:
+        raise InvalidFinancialInput("moratorium period must be shorter than total tenure")
+
     schedule = []
     balance = principal
-    r = annual_rate_pct / 12 / 100
+    label = "Month" if frequency == "monthly" else "Quarter"
 
-    for month in range(1, moratorium_months + 1):
-        interest = round(balance * r, 2)
-        balance = round(balance + interest, 2)  # capitalized
-        schedule.append({"month": month, "opening_balance": balance - interest, "interest": interest,
-                          "principal_paid": 0, "emi": 0, "closing_balance": balance})
+    # Moratorium: interest accrues, optionally capitalized, no repayment
+    for p in range(1, moratorium_periods + 1):
+        interest = round(balance * period_rate, 2)
+        opening = balance
+        if capitalize_moratorium_interest:
+            balance = round(balance + interest, 2)
+        schedule.append({
+            "period": f"Moratorium {label} {p}",
+            "opening_balance": opening,
+            "interest": interest,
+            "principal_paid": 0,
+            "installment": 0,
+            "closing_balance": balance
+        })
 
-    remaining_months = tenure_months - moratorium_months
-    if remaining_months <= 0:
-        raise InvalidFinancialInput("moratorium_months must be less than tenure_months")
-    emi = calculate_emi(balance, annual_rate_pct, remaining_months)
+    # Repayment: standard amortizing installment
+    if period_rate == 0:
+        installment = round(balance / repayment_periods, 2)
+    else:
+        installment = round(
+            balance * period_rate * (1 + period_rate) ** repayment_periods /
+            ((1 + period_rate) ** repayment_periods - 1), 2
+        )
 
-    for i in range(remaining_months):
-        month = moratorium_months + i + 1
-        interest = round(balance * r, 2)
-        principal_paid = round(emi - interest, 2)
+    for p in range(1, repayment_periods + 1):
+        interest = round(balance * period_rate, 2)
+        principal_paid = round(installment - interest, 2)
+        opening = balance
         balance = round(balance - principal_paid, 2)
-        schedule.append({"month": month, "opening_balance": balance + principal_paid, "interest": interest,
-                          "principal_paid": principal_paid, "emi": emi, "closing_balance": max(balance, 0)})
-    return schedule
+        schedule.append({
+            "period": f"Repay {label} {p}",
+            "opening_balance": opening,
+            "interest": interest,
+            "principal_paid": principal_paid,
+            "installment": installment,
+            "closing_balance": max(balance, 0)
+        })
+
+    return schedule, installment
