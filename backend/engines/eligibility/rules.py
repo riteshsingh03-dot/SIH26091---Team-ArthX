@@ -2,9 +2,15 @@ from sqlalchemy import text
 from db.connection import engine
 
 
+def _eq(a, b):
+    try:
+        return float(a) == float(b)
+    except (ValueError, TypeError):
+        return str(a) == str(b)
+
 OPERATORS = {
-    "=": lambda a, b: a == b,
-    "!=": lambda a, b: a != b,
+    "=": _eq,
+    "!=": lambda a, b: not _eq(a, b),
     "<=": lambda a, b: float(a) <= float(b),
     ">=": lambda a, b: float(a) >= float(b),
     "<": lambda a, b: float(a) < float(b),
@@ -45,8 +51,16 @@ def check_eligibility(user_profile: dict, scheme_id: int) -> dict:
         if not compare_fn(actual_value, expected_value):
             failed_rules.append({"field": field, "operator": operator, "expected": expected_value, "actual": actual_value})
 
+    if failed_rules:
+        status = "ineligible"
+    elif missing_fields:
+        status = "insufficient_data"
+    else:
+        status = "eligible"
+
     return {
-        "eligible": len(failed_rules) == 0 and len(missing_fields) == 0,
+        "status": status,
+        "eligible": status == "eligible",
         "failed_rules": failed_rules,
         "missing_fields": missing_fields,
     }
