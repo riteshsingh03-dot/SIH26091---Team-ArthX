@@ -1,0 +1,60 @@
+# db/schema.py
+from sqlalchemy import text
+from db.connection import engine
+
+CREATE_TABLES_SQL = """
+CREATE TABLE IF NOT EXISTS locations (
+    id SERIAL PRIMARY KEY,
+    village_name TEXT NOT NULL,
+    block TEXT,
+    district TEXT NOT NULL,
+    state TEXT NOT NULL,
+    latitude NUMERIC,
+    longitude NUMERIC,
+    population INTEGER,
+    osm_node_id TEXT,
+    created_at TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS schemes (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    state TEXT,
+    project_cost_min NUMERIC NOT NULL,
+    project_cost_max NUMERIC NOT NULL,
+    loan_share NUMERIC NOT NULL,
+    max_loan NUMERIC NOT NULL,
+    interest_rate NUMERIC NOT NULL,
+    tenure_months INTEGER NOT NULL,
+    moratorium_months INTEGER NOT NULL DEFAULT 0,
+    repayment_frequency TEXT NOT NULL DEFAULT 'monthly',
+    source_url TEXT,
+    is_illustrative BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS market_seed_data (
+    id SERIAL PRIMARY KEY,
+    location_id INTEGER NOT NULL REFERENCES locations(id),
+    business_category TEXT NOT NULL,
+    competitor_count INTEGER,
+    avg_price NUMERIC,
+    notes TEXT,
+    source TEXT,
+    is_illustrative BOOLEAN NOT NULL DEFAULT TRUE,
+    last_updated DATE
+);
+
+CREATE TABLE IF NOT EXISTS eligibility_rules (
+    id SERIAL PRIMARY KEY,
+    scheme_id INTEGER NOT NULL REFERENCES schemes(id),
+    field TEXT NOT NULL,
+    operator TEXT NOT NULL,
+    value TEXT NOT NULL
+);
+"""
+
+with engine.connect() as conn:
+    conn.execute(text(CREATE_TABLES_SQL))
+    conn.commit()
+
+print("Tables created successfully.")

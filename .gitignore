@@ -2,6 +2,11 @@ venv/
 env/
 sihenv/
 
+.env
+__pycache__/
+*.pyc
+sihenv/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
