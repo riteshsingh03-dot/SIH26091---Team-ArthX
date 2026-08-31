@@ -27,6 +27,7 @@ class ScenarioComparisonRequest(BaseModel):
 
 class ChatRequest(BaseModel):
     message: str
+    experience_level: str = "intermediate"
 
 app = FastAPI()
 
@@ -104,7 +105,10 @@ def chat(req: ChatRequest):
 
     retrieved = search_scheme_documents(req.message, scheme_id=scheme["id"], top_k=3)
 
-    explanation = generate_explanation(scheme, eligibility, loan, installment, retrieved)
+    explanation = generate_explanation(
+    scheme, eligibility, loan, installment, retrieved,
+    experience_level=req.experience_level
+)
 
     return {
         "explanation": explanation,
