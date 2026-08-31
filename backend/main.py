@@ -13,7 +13,6 @@ from engines.retrieval.search import search_scheme_documents
 
 
 from engines.financial.loan import calculate_loan_structure
-
 from engines.financial.sensitivity import compare_scenarios, run_sensitivity_analysis
 
 class SensitivityRequest(BaseModel):
