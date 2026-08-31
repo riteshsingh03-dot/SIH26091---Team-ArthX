@@ -22,4 +22,8 @@ from db.connection import engine
 
 with engine.connect() as conn:
     result = conn.execute(text("SELECT id FROM schemes WHERE name = 'Micro Finance Scheme'")).scalar()
-    ingest_scheme_document(scheme_id=result, document_text=sample_text, source="illustrative_example")
+
+if result is None:
+    raise RuntimeError("Scheme 'Micro Finance Scheme' not found — run seed_schemes.py first.")
+
+ingest_scheme_document(scheme_id=result, document_text=sample_text, source="illustrative_example")

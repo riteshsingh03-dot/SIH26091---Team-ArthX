@@ -16,14 +16,6 @@ CREATE TABLE IF NOT EXISTS locations (
     created_at TIMESTAMP DEFAULT now()
 );
 
-CREATE TABLE IF NOT EXISTS scheme_documents (
-    id SERIAL PRIMARY KEY,
-    scheme_id INTEGER REFERENCES schemes(id),
-    chunk_text TEXT NOT NULL,
-    embedding JSONB NOT NULL,
-    source TEXT,
-    created_at TIMESTAMP DEFAULT now()
-);
 
 CREATE TABLE IF NOT EXISTS schemes (
     id SERIAL PRIMARY KEY,
@@ -39,6 +31,15 @@ CREATE TABLE IF NOT EXISTS schemes (
     repayment_frequency TEXT NOT NULL DEFAULT 'monthly',
     source_url TEXT,
     is_illustrative BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS scheme_documents (
+    id SERIAL PRIMARY KEY,
+    scheme_id INTEGER REFERENCES schemes(id),
+    chunk_text TEXT NOT NULL,
+    embedding JSONB NOT NULL,
+    source TEXT,
+    created_at TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS market_seed_data (

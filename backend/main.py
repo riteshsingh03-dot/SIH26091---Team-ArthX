@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+import json
 
 from engines.eligibility.scheme_selection import select_scheme
 from engines.eligibility.rules import check_eligibility
@@ -32,14 +33,22 @@ class ChatRequest(BaseModel):
 app = FastAPI()
 
 class FeasibilityRequest(BaseModel):
-    project_cost: float
     state: str
     business_category: str
     margin_pct: float = 0.10
+    project_cost: float | None = None
+    margin_capital: float | None = None
 
 
 @app.post("/feasibility")
 def get_feasibility(req: FeasibilityRequest):
+    if req.project_cost is None:
+        if req.margin_capital is None:
+            raise HTTPException(status_code=400, detail="Provide either project_cost or margin_capital.")
+        if not (0 < req.margin_pct < 1):
+            raise HTTPException(status_code=400, detail="margin_pct must be between 0 and 1 (exclusive) to derive project_cost.")
+        req.project_cost = req.margin_capital / req.margin_pct
+
     scheme = select_scheme(project_cost=req.project_cost, state=req.state)
     if scheme is None:
         raise HTTPException(status_code=404, detail="No matching scheme found for this project cost/state.")
@@ -73,7 +82,10 @@ def get_feasibility(req: FeasibilityRequest):
 
 @app.post("/chat")
 def chat(req: ChatRequest):
-    extracted = extract_user_intent(req.message)
+    try:
+        extracted = extract_user_intent(req.message)
+    except (json.JSONDecodeError, KeyError, IndexError) as e:
+        raise HTTPException(status_code=502, detail="Could not understand the message right now. Please try rephrasing.")
 
     # If project_cost wasn't stated but margin_capital was, derive it
     if extracted.get("project_cost") is None and extracted.get("margin_capital") is not None:
