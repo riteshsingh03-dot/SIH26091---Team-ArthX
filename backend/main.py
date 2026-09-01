@@ -8,6 +8,7 @@ from engines.financial.loan import calculate_loan_structure
 from engines.financial.repayment import generate_repayment_schedule
 from engines.financial.exceptions import InvalidFinancialInput
 
+from engines.llm.swot import generate_swot
 from engines.llm.extraction import extract_user_intent
 from engines.llm.explanation import generate_explanation
 from engines.retrieval.search import search_scheme_documents
@@ -38,6 +39,7 @@ class FeasibilityRequest(BaseModel):
     margin_pct: float = 0.10
     project_cost: float | None = None
     margin_capital: float | None = None
+    experience_level: str = "intermediate"
 
 
 @app.post("/feasibility")
@@ -121,6 +123,13 @@ def chat(req: ChatRequest):
     scheme, eligibility, loan, installment, retrieved,
     experience_level=req.experience_level
 )
+    swot = generate_swot(
+    business_category=extracted.get("business_category"),
+    project_cost=extracted["project_cost"],
+    loan_amount=loan["loan_amount"],
+    location={"village_name": None, "block": None, "district": None, "state": extracted.get("state")},
+    experience_level=req.experience_level,
+)
 
     return {
         "explanation": explanation,
@@ -129,6 +138,7 @@ def chat(req: ChatRequest):
         "loan": loan,
         "installment": installment,
         "retrieved_chunks": retrieved,
+        "swot": swot,
     }
 
 

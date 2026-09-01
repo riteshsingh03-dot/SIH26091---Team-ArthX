@@ -1,0 +1,74 @@
+import os
+from dotenv import load_dotenv
+from google import genai
+from engines.llm.business_knowledge import get_category_notes
+from engines.llm.explanation import EXPERIENCE_STYLE_GUIDANCE
+
+load_dotenv()
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+
+SWOT_PROMPT = """
+You are generating a SWOT analysis (Strengths, Weaknesses, Opportunities, Threats)
+for a rural micro-entrepreneur, based ONLY on the facts given below. Do NOT invent
+statistics, competitor numbers, or prices not present in this data. If a data point
+is marked "illustrative", treat it as an example figure and note that in your output
+where relevant rather than presenting it as confirmed fact.
+
+BUSINESS CATEGORY: {business_category}
+LOCATION: {village_name}, {block}, {district}, {state}
+PROJECT COST: {project_cost}
+LOAN AMOUNT: {loan_amount}
+
+LOCAL MARKET DATA (illustrative unless stated otherwise):
+- Nearby population within reach: {nearby_population}
+- Existing competitors in this category locally: {competitor_count}
+- Average local price for this category: {avg_price}
+- Is this market data illustrative/seeded: {is_illustrative}
+
+KNOWN CATEGORY-LEVEL PATTERNS (general knowledge, not location-specific):
+- Seasonal demand pattern: {seasonal_notes}
+- Supply chain risk pattern: {supply_chain_risks}
+
+Return a SWOT analysis as 4 short sections (Strengths, Weaknesses, Opportunities, Threats),
+2-3 bullet points each, in plain language suitable for a first-time entrepreneur.
+Ground every point in the facts given above — do not fabricate numbers or claims
+beyond what is provided.
+"""
+
+
+def generate_swot(
+    business_category: str,
+    project_cost: float,
+    loan_amount: float,
+    location: dict,
+    market_data: dict | None = None,
+    experience_level: str = "intermediate",
+) -> str:
+    """
+    location: {"village_name", "block", "district", "state"}
+    market_data: {"nearby_population", "competitor_count", "avg_price", "is_illustrative"} or None
+    """
+    category_notes = get_category_notes(business_category)
+    market_data = market_data or {}
+    style_instruction = EXPERIENCE_STYLE_GUIDANCE.get(
+        experience_level, EXPERIENCE_STYLE_GUIDANCE["intermediate"]
+    )
+
+    prompt = SWOT_PROMPT.format(
+        business_category=business_category,
+        village_name=location.get("village_name", "Unknown"),
+        block=location.get("block", "Unknown"),
+        district=location.get("district", "Unknown"),
+        state=location.get("state", "Unknown"),
+        project_cost=project_cost,
+        loan_amount=loan_amount,
+        nearby_population=market_data.get("nearby_population", "Not available"),
+        competitor_count=market_data.get("competitor_count", "Not available"),
+        avg_price=market_data.get("avg_price", "Not available"),
+        is_illustrative=market_data.get("is_illustrative", True),
+        seasonal_notes=category_notes["seasonal_notes"],
+        supply_chain_risks=category_notes["supply_chain_risks"],
+    ) + f"\n\nSTYLE INSTRUCTION: {style_instruction}"
+
+    response = client.models.generate_content(model="gemini-3.6-flash", contents=prompt)
+    return response.text
