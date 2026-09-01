@@ -1,3 +1,4 @@
+import time
 import requests
 import pandas as pd
 from sqlalchemy import text
@@ -10,6 +11,7 @@ PLACES_TO_SEED = [
     "Shravasti, Uttar Pradesh, India",
 ]
 RADIUS_METERS = 10000  # 10 km, per PS spec
+REQUEST_DELAY_SECONDS = 1  # Nominatim usage policy: max 1 request/sec
 
 
 def geocode_place(place: str) -> dict:
@@ -19,7 +21,19 @@ def geocode_place(place: str) -> dict:
     headers = {"User-Agent": "SIH-Population-Project/1.0"}
 
     response = requests.get(url, params=params, headers=headers)
-    data = response.json()
+
+    if response.status_code != 200:
+        raise ValueError(
+            f"Nominatim returned status {response.status_code} for '{place}': {response.text[:200]}"
+        )
+
+    try:
+        data = response.json()
+    except ValueError as e:
+        raise ValueError(
+            f"Nominatim returned non-JSON response for '{place}' "
+            f"(likely rate-limited): {response.text[:200]}"
+        ) from e
 
     if not data:
         raise ValueError(f"Nominatim found no match for '{place}'")
@@ -34,8 +48,9 @@ def geocode_place(place: str) -> dict:
     return {"latitude": latitude, "longitude": longitude, "district": district, "state": state}
 
 
-def fetch_villages(latitude: float, longitude: float, radius: int) -> list[dict]:
-    """Queries Overpass for villages within `radius` meters of the given point."""
+def fetch_villages(latitude: float, longitude: float, radius: int, max_retries: int = 3) -> list[dict]:
+    """Queries Overpass for villages within `radius` meters of the given point.
+    Retries with backoff on timeout (504) since the public Overpass server is often overloaded."""
     query = f"""
     [out:json][timeout:60];
     node
@@ -44,14 +59,35 @@ def fetch_villages(latitude: float, longitude: float, radius: int) -> list[dict]
     out;
     """
     url = "https://overpass-api.de/api/interpreter"
-    response = requests.post(url, data=query, headers={"User-Agent": "SIH-Population-Project/1.0"})
-    data = response.json()
 
-    if "elements" not in data:
-        raise ValueError(f"Overpass query failed: {data}")
+    for attempt in range(1, max_retries + 1):
+        response = requests.post(url, data=query, headers={"User-Agent": "SIH-Population-Project/1.0"})
 
-    return data["elements"]
+        if response.status_code in (429, 504):
+            wait = 5 * attempt  # 5s, 10s, 15s
+            print(f"    Overpass returned {response.status_code}, retrying in {wait}s... (attempt {attempt}/{max_retries})")
+            time.sleep(wait)
+            continue
 
+        if response.status_code != 200:
+            raise ValueError(
+                f"Overpass returned status {response.status_code}: {response.text[:200]}"
+            )
+
+        try:
+            data = response.json()
+        except ValueError as e:
+            raise ValueError(
+                f"Overpass returned non-JSON response (likely rate-limited or timed out): "
+                f"{response.text[:200]}"
+            ) from e
+
+        if "elements" not in data:
+            raise ValueError(f"Overpass query failed: {data}")
+
+        return data["elements"]
+
+    raise ValueError(f"Overpass still timing out after {max_retries} attempts — server likely overloaded.")
 
 def get_existing_osm_ids() -> set[str]:
     with engine.connect() as conn:
@@ -62,6 +98,8 @@ def get_existing_osm_ids() -> set[str]:
 def seed_locations_for_place(place: str, radius: int, existing_ids: set[str]) -> int:
     """Geocodes `place`, fetches nearby villages, inserts new ones. Returns count inserted."""
     geo = geocode_place(place)
+    time.sleep(REQUEST_DELAY_SECONDS)  # be polite before the follow-up Overpass call too
+
     elements = fetch_villages(geo["latitude"], geo["longitude"], radius)
 
     rows = []
@@ -110,5 +148,6 @@ if __name__ == "__main__":
             total_inserted += seed_locations_for_place(place, RADIUS_METERS, existing_ids)
         except ValueError as e:
             print(f"  Skipping '{place}': {e}")
+        time.sleep(REQUEST_DELAY_SECONDS)  # rate-limit courtesy between places too
 
     print(f"Done. {total_inserted} new villages inserted across {len(PLACES_TO_SEED)} districts.")
