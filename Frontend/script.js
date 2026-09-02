@@ -99,10 +99,11 @@ function setupUI() {
       chatToggleBtn.style.display = "flex";
     });
   }
-  // --- AUTH MODAL LOGIC ---
+ // --- AUTH MODAL & STATE LOGIC ---
   const authModal = document.getElementById("authModal");
   const openAuthBtn = document.getElementById("openAuthModalBtn");
   const closeAuthBtn = document.getElementById("closeAuthModalBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
   const tabBtns = document.querySelectorAll(".tab-btn");
   const loginForm = document.getElementById("loginForm");
   const signupForm = document.getElementById("signupForm");
@@ -128,17 +129,28 @@ function setupUI() {
 
     loginForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      alert("Logged in successfully!");
       authModal.classList.add("hidden");
+      if(openAuthBtn) openAuthBtn.classList.add("hidden");
+      if(logoutBtn) logoutBtn.classList.remove("hidden");
+      alert("Logged in successfully!");
     });
 
     signupForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      alert("Account created successfully!");
       authModal.classList.add("hidden");
+      if(openAuthBtn) openAuthBtn.classList.add("hidden");
+      if(logoutBtn) logoutBtn.classList.remove("hidden");
+      alert("Account created successfully!");
     });
-  }
 
+    if(logoutBtn) {
+      logoutBtn.addEventListener("click", () => {
+        logoutBtn.classList.add("hidden");
+        if(openAuthBtn) openAuthBtn.classList.remove("hidden");
+        alert("Logged out successfully!");
+      });
+    }
+  }
   // --- SIMULATION MODAL & ENGINE LOGIC ---
   const openSimBtn = document.getElementById("openSimModalBtn");
   const simModal = document.getElementById("simModalOverlay");
@@ -228,6 +240,8 @@ function setupUI() {
       }
     });
   }
+
+  
 }
 
 function setupVoice() {
@@ -521,3 +535,69 @@ function readReportAloud() {
   
   window.speechSynthesis.speak(utterance);
 }
+// --- MAP RENDERER FOR COMPETITORS ---
+let competitorMap = null;
+
+function renderCompetitorMap(competitors) {
+  const mapContainerId = "competitorMapDiv";
+  let mapDiv = document.getElementById(mapContainerId);
+  
+  // Create container if it doesn't exist in the report DOM
+  if (!mapDiv) {
+    return; // Ensure the HTML element exists or is appended in renderReport
+  }
+
+  // Clean up previous map instance if re-rendering
+  if (competitorMap) {
+    competitorMap.remove();
+  }
+
+  // Default center (e.g., central coordinates or fallback)
+  const defaultLat = 20.5937; 
+  const defaultLon = 78.9629;
+
+  competitorMap = L.map(mapContainerId).setView([defaultLat, defaultLon], 13);
+
+  // Load OpenStreetMap tiles
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(competitorMap);
+
+  // Add markers if coordinates are provided by backend, or plot them relative to center
+  if (competitors && competitors.length > 0) {
+    const bounds = [];
+    competitors.forEach((comp, index) => {
+      // Fallback or explicit lat/lon from OSM payload
+      const lat = comp.lat || (defaultLat + (index * 0.01));
+      const lon = comp.lon || (defaultLon + (index * 0.01));
+      
+      const marker = L.marker([lat, lon]).addTo(competitorMap);
+      marker.bindPopup(`<b>${comp.name || 'Competitor'}</b><br>${comp.distance_km} km away`);
+      bounds.push([lat, lon]);
+    });
+
+    if (bounds.length > 0) {
+      competitorMap.fitBounds(bounds, { padding: [50, 50] });
+    }
+  }
+}
+
+let competitorHTML = "";
+  if (data.competitor_mapping && data.competitor_mapping.length > 0) {
+      competitorHTML = `
+      <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 20px 0;">
+      <h3 style="margin-top:0">Nearby Competitors Map (Live OSM)</h3>
+      <div id="competitorMapDiv" style="height: 300px; width: 100%; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--line);"></div>
+      <ul class="competitor-list">
+        ${data.competitor_mapping.slice(0, 5).map(comp => `
+          <li class="competitor-card">
+            <span class="competitor-name">${comp.name || 'Unnamed Business'}</span>
+            <span class="competitor-dist">${comp.distance_km} km away</span>
+          </li>
+        `).join('')}
+      </ul>
+      `;
+      // Trigger map rendering after DOM update
+      setTimeout(() => renderCompetitorMap(data.competitor_mapping), 100);
+  }
