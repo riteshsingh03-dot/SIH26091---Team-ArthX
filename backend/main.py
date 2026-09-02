@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import json
 
@@ -12,24 +13,30 @@ from engines.llm.swot import generate_swot
 from engines.llm.extraction import extract_user_intent
 from engines.llm.explanation import generate_explanation
 from engines.retrieval.search import search_scheme_documents
-
-
-from engines.financial.loan import calculate_loan_structure
 from engines.financial.sensitivity import compare_scenarios, run_sensitivity_analysis
 
 from engines.journal.entries import add_journal_entry, get_entries
 from engines.journal.query import answer_journal_question
 
+app = FastAPI()
+
+# --- ENABLE CORS FOR FRONTEND CONNECTION ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins (e.g., your Live Server port)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class SensitivityRequest(BaseModel):
     base_inputs: dict
     vary_field: str
     values: list[float]
 
-
 class ScenarioComparisonRequest(BaseModel):
     base_inputs: dict
-    scenarios: dict[str, dict]  # e.g. {"Scenario A": {...}, "Scenario B": {...}}
+    scenarios: dict[str, dict]
 
 class ChatRequest(BaseModel):
     message: str
@@ -44,8 +51,6 @@ class JournalEntryRequest(BaseModel):
 
 class JournalQuestionRequest(BaseModel):
     question: str
-
-app = FastAPI()
 
 class FeasibilityRequest(BaseModel):
     state: str
@@ -89,7 +94,7 @@ def get_feasibility(req: FeasibilityRequest):
         raise HTTPException(status_code=400, detail=str(e))
 
     return {
-        "scheme": {"name": scheme["name"], "interest_rate": scheme["interest_rate"], "is_illustrative": scheme["is_illustrative"]},
+        "scheme": {"name": scheme["name"], "interest_rate": scheme["interest_rate"], "is_illustrative": scheme.get("is_illustrative", False)},
         "eligibility": eligibility,
         "loan": loan,
         "installment": installment,
@@ -103,9 +108,8 @@ def chat(req: ChatRequest):
     except (json.JSONDecodeError, KeyError, IndexError) as e:
         raise HTTPException(status_code=502, detail="Could not understand the message right now. Please try rephrasing.")
 
-    # If project_cost wasn't stated but margin_capital was, derive it
     if extracted.get("project_cost") is None and extracted.get("margin_capital") is not None:
-        margin_pct = 0.10  # or read from a default/config
+        margin_pct = 0.10
         extracted["project_cost"] = extracted["margin_capital"] / margin_pct
 
     if extracted.get("project_cost") is None:
@@ -134,16 +138,16 @@ def chat(req: ChatRequest):
     retrieved = search_scheme_documents(req.message, scheme_id=scheme["id"], top_k=3)
 
     explanation = generate_explanation(
-    scheme, eligibility, loan, installment, retrieved,
-    experience_level=req.experience_level
-)
+        scheme, eligibility, loan, installment, retrieved,
+        experience_level=req.experience_level
+    )
     swot = generate_swot(
-    business_category=extracted.get("business_category"),
-    project_cost=extracted["project_cost"],
-    loan_amount=loan["loan_amount"],
-    location={"village_name": None, "block": None, "district": None, "state": extracted.get("state")},
-    experience_level=req.experience_level,
-)
+        business_category=extracted.get("business_category"),
+        project_cost=extracted["project_cost"],
+        loan_amount=loan["loan_amount"],
+        location={"village_name": None, "block": None, "district": None, "state": extracted.get("state")},
+        experience_level=req.experience_level,
+    )
 
     return {
         "explanation": explanation,
@@ -155,11 +159,9 @@ def chat(req: ChatRequest):
         "swot": swot,
     }
 
-
 @app.post("/scenarios/compare")
 def compare_scenarios_endpoint(req: ScenarioComparisonRequest):
     return compare_scenarios(req.base_inputs, req.scenarios)
-
 
 @app.post("/scenarios/sensitivity")
 def sensitivity_endpoint(req: SensitivityRequest):
