@@ -60,25 +60,13 @@ function setupUI() {
     });
   });
 
-  // --- NEW: READ ALOUD LOGIC ---
-function readReportAloud() {
-  const content = document.getElementById("resultContent").innerText;
-  if (!content) return alert("No report to read yet!");
-
-  // Stop any currently playing audio
-  window.speechSynthesis.cancel();
-
-  const utterance = new SpeechSynthesisUtterance(content);
-  // Matches the language to the current UI selection (English or Hindi)
-  utterance.lang = currentLang === 'en' ? 'en-IN' : 'hi-IN';
-  utterance.rate = 0.9; // Slightly slower for easier understanding
-  
-  window.speechSynthesis.speak(utterance);
-}
-
   document.getElementById("calcBtn").addEventListener("click", submitWizardToFastAPI);
   document.getElementById("chatBtn").addEventListener("click", submitChatToFastAPI);
   document.getElementById("downloadBtn").addEventListener("click", () => window.print());
+  
+  // --- NEW: Read Aloud Event Listener ---
+  const readBtn = document.getElementById("readAloudBtn");
+  if(readBtn) readBtn.addEventListener("click", readReportAloud);
   
   // --- NEW: Journal Event Listeners ---
   const logBtn = document.getElementById("logJournalBtn");
@@ -90,6 +78,23 @@ function readReportAloud() {
   // Set today's date automatically in the journal form
   const dateEl = document.getElementById("journalDate");
   if(dateEl) dateEl.valueAsDate = new Date();
+
+  // --- NEW: Floating Chat Widget Toggle Logic ---
+  const chatToggleBtn = document.getElementById("chatToggleBtn");
+  const floatingChatWidget = document.getElementById("floatingChatWidget");
+  const closeChatBtn = document.getElementById("closeChatBtn");
+
+  if(chatToggleBtn && floatingChatWidget && closeChatBtn) {
+    chatToggleBtn.addEventListener("click", () => {
+      floatingChatWidget.classList.remove("hidden");
+      chatToggleBtn.style.display = "none";
+    });
+
+    closeChatBtn.addEventListener("click", () => {
+      floatingChatWidget.classList.add("hidden");
+      chatToggleBtn.style.display = "flex";
+    });
+  }
 }
 
 function setupVoice() {
@@ -128,10 +133,18 @@ function appendChatBubble(text, sender) {
 async function submitWizardToFastAPI() {
   const marginCapital = parseFloat(document.getElementById("marginInput").value);
   const category = document.getElementById("categorySelect").value;
+  
+  // Grabbing personal and granular location details if present
+  const stateInput = document.getElementById("stateInput");
+  const districtInput = document.getElementById("districtInput");
+  const stateVal = stateInput ? stateInput.value.trim() : "";
+  const districtVal = districtInput ? districtInput.value.trim() : "";
+
   if (!marginCapital) return alert("Please enter a valid margin capital amount.");
 
   const payload = {
-    state: "Maharashtra", 
+    state: stateVal || "Maharashtra", 
+    district: districtVal || null,
     business_category: category,
     margin_pct: 0.10,
     margin_capital: marginCapital,
@@ -216,8 +229,6 @@ function renderReport(data) {
   // ORIGINAL SWOT RENDERER
   let swotHTML = "";
   if (data.swot) {
-      // NOTE: If data.swot is a plain string from the backend, we display it directly. 
-      // If it's an object, we use your original fallback logic.
       let swotContent = typeof data.swot === 'string' ? data.swot.replace(/\n/g, '<br>') : `
         <p><strong>Strengths:</strong> ${data.swot.strengths || 'N/A'}</p>
         <p><strong>Weaknesses:</strong> ${data.swot.weaknesses || 'N/A'}</p>
@@ -286,8 +297,10 @@ async function submitJournalEntry() {
     });
     if (response.ok) {
       const statusText = document.getElementById("journalLogStatus");
-      statusText.style.display = "block";
-      setTimeout(() => statusText.style.display = "none", 3000);
+      if(statusText) {
+        statusText.style.display = "block";
+        setTimeout(() => statusText.style.display = "none", 3000);
+      }
       document.getElementById("journalSales").value = "";
       document.getElementById("journalExpenses").value = "";
       document.getElementById("journalUnits").value = "";
@@ -298,8 +311,11 @@ async function submitJournalEntry() {
 }
 
 async function askJournal() {
-  const query = document.getElementById("journalQuery").value;
+  const queryEl = document.getElementById("journalQuery");
   const answerDiv = document.getElementById("journalAnswer");
+  
+  if (!queryEl || !answerDiv) return;
+  const query = queryEl.value;
   
   if (!query) return;
   answerDiv.innerHTML = "<em>Analyzing your ledger...</em>";
@@ -327,6 +343,7 @@ async function askJournal() {
     answerDiv.innerHTML = `<span style="color:red">Failed to reach the AI.</span>`;
   }
 }
+
 // --- NEW: READ ALOUD LOGIC ---
 function readReportAloud() {
   const content = document.getElementById("resultContent").innerText;
