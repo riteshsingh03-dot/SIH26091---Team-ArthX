@@ -1,7 +1,5 @@
-// ==========================================
-// CONFIGURATION & DICTIONARY
-// ==========================================
-const API_BASE_URL = "http://localhost:5000/api";
+// Point this to your FastAPI local server
+const API_BASE_URL = "http://127.0.0.1:8000";
 
 const i18n = {
   en: {
@@ -25,16 +23,11 @@ const i18n = {
     q2: "2. व्यवसाय श्रेणी", catDairy: "डेयरी फार्मिंग", catTailor: "सिलाई", catGrocery: "किराने की दुकान",
     q3: "3. आपकी मार्जिन पूंजी (₹)", calcBtn: "AI रिपोर्ट जनरेट करें",
     reportTitle: "आपकी व्यावसायिक और वित्तीय रिपोर्ट", downloadBtn: "📄 डाउनलोड / प्रिंट करें", errorServer: "सर्वर से कनेक्ट नहीं हो सका।"
-  },
-  // ADD BENGALI (bn), MARATHI (mr), TELUGU (te), TAMIL (ta) mappings here following the exact same keys
+  }
 };
 
 let currentLang = 'en';
-const profile = { rural: true, category: 'dairy', marginCapital: null };
 
-// ==========================================
-// INITIALIZATION
-// ==========================================
 document.addEventListener("DOMContentLoaded", () => {
   setupLanguage();
   setupUI();
@@ -50,71 +43,51 @@ function setupLanguage() {
 }
 
 function updateLanguage(lang) {
-  if (!i18n[lang]) return; // Fallback if lang dict is missing
   document.querySelectorAll("[data-i18n]").forEach(el => {
     const key = el.getAttribute("data-i18n");
-    if (i18n[lang][key]) {
+    if (i18n[lang] && i18n[lang][key]) {
       if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.placeholder = i18n[lang][key];
       else el.innerHTML = i18n[lang][key];
     }
   });
 }
 
-// ==========================================
-// UI LOGIC & EVENTS
-// ==========================================
 function setupUI() {
-  // Toggle Rural/Urban
   document.querySelectorAll(".toggle-row .pill-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".pill-btn").forEach(b => b.setAttribute("aria-pressed", "false"));
       btn.setAttribute("aria-pressed", "true");
-      profile.rural = btn.dataset.area === "rural";
     });
   });
 
-  // Buttons
-  document.getElementById("calcBtn").addEventListener("click", handleWizardSubmit);
-  document.getElementById("chatBtn").addEventListener("click", handleChatSubmit);
+  document.getElementById("calcBtn").addEventListener("click", submitWizardToFastAPI);
+  document.getElementById("chatBtn").addEventListener("click", submitChatToFastAPI);
   document.getElementById("downloadBtn").addEventListener("click", () => window.print());
 }
 
-// ==========================================
-// VOICE INPUT (Web Speech API)
-// ==========================================
 function setupVoice() {
   const voiceBtn = document.getElementById("voiceBtn");
   const chatInput = document.getElementById("chatInput");
-  
-  // Check browser support
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
     voiceBtn.style.display = 'none';
     return;
   }
-
   const recognition = new SpeechRecognition();
   recognition.continuous = false;
-  
   voiceBtn.addEventListener("click", () => {
-    recognition.lang = currentLang === 'en' ? 'en-IN' : `${currentLang}-IN`; 
+    recognition.lang = currentLang === 'en' ? 'en-IN' : 'hi-IN'; 
     recognition.start();
     voiceBtn.classList.add("listening");
   });
-
   recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    chatInput.value = transcript;
+    chatInput.value = event.results[0][0].transcript;
     voiceBtn.classList.remove("listening");
   };
-
   recognition.onerror = () => voiceBtn.classList.remove("listening");
   recognition.onend = () => voiceBtn.classList.remove("listening");
 }
 
-// ==========================================
-// BACKEND API CONNECTIONS
-// ==========================================
 function appendChatBubble(text, sender) {
   const history = document.getElementById("chatHistory");
   const bubble = document.createElement("div");
@@ -124,7 +97,25 @@ function appendChatBubble(text, sender) {
   history.scrollTop = history.scrollHeight;
 }
 
-async function handleChatSubmit() {
+// --- WIZARD SUBMISSION ---
+async function submitWizardToFastAPI() {
+  const marginCapital = parseFloat(document.getElementById("marginInput").value);
+  const category = document.getElementById("categorySelect").value;
+  if (!marginCapital) return alert("Please enter a valid margin capital amount.");
+
+  const payload = {
+    state: "Maharashtra", 
+    business_category: category,
+    margin_pct: 0.10,
+    margin_capital: marginCapital,
+    experience_level: "beginner"
+  };
+
+  await fetchAndRenderResult("/feasibility", payload);
+}
+
+// --- CHAT SUBMISSION ---
+async function submitChatToFastAPI() {
   const inputEl = document.getElementById("chatInput");
   const message = inputEl.value.trim();
   if (!message) return;
@@ -132,77 +123,89 @@ async function handleChatSubmit() {
   inputEl.value = "";
   appendChatBubble(message, "user");
 
+  const payload = {
+    message: message,
+    experience_level: "beginner"
+  };
+
   try {
-    // 1. Send text to LLM endpoint for NLP extraction
-    const nlpRes = await fetch(`${API_BASE_URL}/nlp-extract`, {
+    const response = await fetch(`${API_BASE_URL}/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: message, language: currentLang })
+      body: JSON.stringify(payload)
     });
+
+    if (!response.ok) throw new Error("API Error");
+    const data = await response.json();
     
-    // Simulate NLP mapping
-    // const extracted = await nlpRes.json();
-    appendChatBubble("I've calculated your financial roadmap. Check the report below!", "ai");
-    
-    // Auto-trigger the report generation
-    profile.marginCapital = 50000; // Mock extracted data
-    fetchReport(profile);
-    
+    appendChatBubble(data.explanation || "I have analyzed your request. See the report below!", "ai");
+    renderReport(data);
+
   } catch (err) {
     appendChatBubble(i18n[currentLang].errorServer, "ai");
   }
 }
 
-function handleWizardSubmit() {
-  profile.category = document.getElementById("categorySelect").value;
-  profile.marginCapital = parseInt(document.getElementById("marginInput").value);
-  
-  if (!profile.marginCapital) {
-    alert("Please enter a valid margin capital amount.");
-    return;
-  }
-  fetchReport(profile);
-}
-
-async function fetchReport(dataPayload) {
+async function fetchAndRenderResult(endpoint, payload) {
   const resultSec = document.getElementById("resultSection");
   const loader = document.getElementById("loadingIndicator");
-  const content = document.getElementById("resultContent");
-
+  
   resultSec.hidden = false;
   loader.hidden = false;
-  content.innerHTML = "";
+  document.getElementById("resultContent").innerHTML = "";
   resultSec.scrollIntoView({ behavior: "smooth" });
 
   try {
-    // 2. Send structured data to your calculation engine
-    const reportRes = await fetch(`${API_BASE_URL}/generate-report`, {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(dataPayload)
+      body: JSON.stringify(payload)
     });
     
-    // const reportData = await reportRes.json();
-    
-    // MOCK DELAY & RESPONSE:
-    setTimeout(() => {
-      loader.hidden = true;
-      content.innerHTML = `
-        <div class="step-card" style="border-left: 4px solid var(--primary)">
-          <h3 style="margin-top:0">Module 1: Financial Structure (Mudra Scheme)</h3>
-          <p><strong>Available Margin:</strong> ₹${dataPayload.marginCapital}</p>
-          <p><strong>Total Project Cost:</strong> ₹${dataPayload.marginCapital * 10}</p>
-          <p><strong>Eligible Loan (90%):</strong> ₹${(dataPayload.marginCapital * 10) * 0.9}</p>
-          <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 15px 0;">
-          <h3 style="margin-top:0">Module 2: Hyper-Local Market Analysis</h3>
-          <p><strong>Competitors nearby:</strong> Low saturation in Gram Panchayat.</p>
-          <p><strong>Threats:</strong> Supply chain dependency on neighboring block.</p>
-        </div>
-      `;
-    }, 1500);
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Server error");
+    }
+
+    const data = await response.json();
+    loader.hidden = true;
+    renderReport(data);
 
   } catch (err) {
     loader.hidden = true;
-    content.innerHTML = `<p style="color:red">${i18n[currentLang].errorServer}</p>`;
+    document.getElementById("resultContent").innerHTML = `<p style="color:red">Error: ${err.message}</p>`;
   }
+}
+
+function renderReport(data) {
+  const content = document.getElementById("resultContent");
+  
+  const schemeName = data.scheme?.name || "Standard Loan";
+  const projectCost = data.loan?.project_cost || 0;
+  const marginMoney = data.loan?.margin_money || 0;
+  const loanAmount = data.loan?.loan_amount || 0;
+  const emi = data.installment || 0;
+  
+  let swotHTML = "";
+  if (data.swot) {
+      swotHTML = `
+      <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 20px 0;">
+      <h3 style="margin-top:0">AI Market Analysis (SWOT)</h3>
+      <p><strong>Strengths:</strong> ${data.swot.strengths || 'N/A'}</p>
+      <p><strong>Weaknesses:</strong> ${data.swot.weaknesses || 'N/A'}</p>
+      <p><strong>Opportunities:</strong> ${data.swot.opportunities || 'N/A'}</p>
+      <p><strong>Threats:</strong> ${data.swot.threats || 'N/A'}</p>
+      `;
+  }
+
+  content.innerHTML = `
+    <div class="step-card" style="border-left: 4px solid var(--primary)">
+      <h3 style="margin-top:0">Selected Scheme: ${schemeName}</h3>
+      <p><strong>Total Project Cost:</strong> ₹${projectCost.toLocaleString('en-IN')}</p>
+      <p><strong>Your Contribution (Margin):</strong> ₹${marginMoney.toLocaleString('en-IN')}</p>
+      <p><strong>Loan Amount (90%):</strong> ₹${loanAmount.toLocaleString('en-IN')}</p>
+      <p><strong>Estimated Repayment:</strong> ₹${emi.toLocaleString('en-IN')} per installment</p>
+      ${swotHTML}
+    </div>
+  `;
 }
