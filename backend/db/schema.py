@@ -61,6 +61,16 @@ CREATE TABLE IF NOT EXISTS eligibility_rules (
     operator TEXT NOT NULL,
     value TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS journal_entries (
+    id SERIAL PRIMARY KEY,
+    entry_date DATE NOT NULL,
+    sales_revenue NUMERIC,
+    expenses NUMERIC,
+    units_sold NUMERIC,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT now()
+);
 """
 
 with engine.connect() as conn:

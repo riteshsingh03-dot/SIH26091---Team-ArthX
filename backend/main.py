@@ -17,6 +17,10 @@ from engines.retrieval.search import search_scheme_documents
 from engines.financial.loan import calculate_loan_structure
 from engines.financial.sensitivity import compare_scenarios, run_sensitivity_analysis
 
+from engines.journal.entries import add_journal_entry, get_entries
+from engines.journal.query import answer_journal_question
+
+
 class SensitivityRequest(BaseModel):
     base_inputs: dict
     vary_field: str
@@ -30,6 +34,16 @@ class ScenarioComparisonRequest(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     experience_level: str = "intermediate"
+
+class JournalEntryRequest(BaseModel):
+    entry_date: str
+    sales_revenue: float | None = None
+    expenses: float | None = None
+    units_sold: float | None = None
+    notes: str | None = None
+
+class JournalQuestionRequest(BaseModel):
+    question: str
 
 app = FastAPI()
 
@@ -150,3 +164,15 @@ def compare_scenarios_endpoint(req: ScenarioComparisonRequest):
 @app.post("/scenarios/sensitivity")
 def sensitivity_endpoint(req: SensitivityRequest):
     return run_sensitivity_analysis(req.base_inputs, req.vary_field, req.values)
+
+@app.post("/journal/entry")
+def create_journal_entry(req: JournalEntryRequest):
+    return add_journal_entry(**req.model_dump())
+
+@app.get("/journal/entries")
+def list_journal_entries(start_date: str = None, end_date: str = None):
+    return get_entries(start_date, end_date)
+
+@app.post("/journal/ask")
+def ask_journal(req: JournalQuestionRequest):
+    return answer_journal_question(req.question)
