@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
  
 <header class="site-header">
@@ -20,35 +19,30 @@
         <span class="brand-tagline" data-i18n="tagline">Smart business funding, in plain words</span>
       </div>
     </div>
-    <!-- Multilingual Dropdown (Preserved your extended list) -->
-    <select id="langSelect" class="lang-dropdown">
-      <option value="en">English</option>
-      <option value="hi">हिंदी (Hindi)</option>
-      <option value="bn">বাংলা (Bengali)</option>
-      <option value="mr">मराठी (Marathi)</option>
-      <option value="te">తెలుగు (Telugu)</option>
-      <option value="ta">தமிழ் (Tamil)</option>
-    </select>
-
-    <!-- Add inside .header-row, next to #langSelect -->
-<div class="auth-header-actions">
-  <button id="openAuthModalBtn" class="btn btn-secondary hover-lift" style="padding: 8px 16px; font-size: 14px;">Sign Up / Login</button>
-</div>
+    <div class="header-actions">
+      <select id="langSelect" class="lang-dropdown">
+        <option value="en">English</option>
+        <option value="hi">हिंदी (Hindi)</option>
+        <option value="bn">বাংলা (Bengali)</option>
+        <option value="mr">मराठी (Marathi)</option>
+        <option value="te">తెలుగు (Telugu)</option>
+        <option value="ta">தமிழ் (Tamil)</option>
+      </select>
+      <button id="openAuthModalBtn" class="btn btn-secondary hover-lift" style="padding: 8px 16px; font-size: 14px;">Sign Up / Login</button>
+    </div>
   </div>
 </header>
  
-<main>
+<main class="wrap" style="padding-top: 20px; padding-bottom: 50px;">
   <!-- HERO -->
-  <section class="hero">
-    <div class="wrap">
-      <h1 data-i18n="heroTitle">Turn your savings into a funded business plan.</h1>
-      <p class="hero-sub" data-i18n="heroSub">Tell us your location and available cash. We calculate your total budget, map local competitors, and match you with government schemes.</p>
-    </div>
+  <section class="hero unified-card" style="text-align: center; padding: 30px; margin-bottom: 25px;">
+    <h1 data-i18n="heroTitle" style="font-size: 28px; margin-bottom: 10px;">Turn your savings into a funded business plan.</h1>
+    <p class="hero-sub" data-i18n="heroSub" style="font-size: 16px; color: var(--text-light);">Tell us your location and available cash. We calculate your total budget, map local competitors, and match you with government schemes.</p>
   </section>
 
   <!-- HOW IT WORKS FLOWCHART -->
-  <section class="flowchart-section wrap">
-    <h3 data-i18n="flowTitle">How ArthSetu Works</h3>
+  <section class="flowchart-section unified-card" style="padding: 20px; margin-bottom: 25px; text-align: center;">
+    <h3 data-i18n="flowTitle" style="margin-top:0;">How ArthSetu Works</h3>
     <div class="flow-steps">
       <div class="step"><span>1</span> <p data-i18n="flow1">Input Details & Margin Capital</p></div>
       <div class="step-arrow">→</div>
@@ -58,55 +52,57 @@
     </div>
   </section>
  
-  <!-- MANUAL WIZARD -->
-  <section class="wizard-section" id="wizard">
-    <div class="wrap">
-      <h2 data-i18n="wizardTitle">Or enter details manually</h2>
-      
-      <!-- NEW: Personal & Location Details Section -->
-      <div class="step-card">
-        <p class="step-label">Personal & Location Details</p>
-        <div class="input-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
-          <input type="text" id="userNameInput" class="form-input" placeholder="Full Name">
-          <input type="text" id="userPhoneInput" class="form-input" placeholder="Phone Number">
-          <input type="text" id="stateInput" class="form-input" placeholder="State (e.g. Uttar Pradesh)">
-          <input type="text" id="districtInput" class="form-input" placeholder="District">
-          <input type="text" id="blockInput" class="form-input" placeholder="Block / Tehsil">
-          <input type="text" id="villageInput" class="form-input" placeholder="Village / City Name">
-        </div>
+  <!-- UNIFIED WIZARD & PROFILE SECTION -->
+  <section class="wizard-section unified-card" style="padding: 25px; margin-bottom: 25px;">
+    <h2 data-i18n="wizardTitle" style="margin-top:0; border-bottom: 1px solid var(--line); padding-bottom: 12px;">Business & Location Setup</h2>
+    
+    <div class="step-card">
+      <p class="step-label">1. Personal & Contact Details</p>
+      <div class="input-grid">
+        <input type="text" id="userNameInput" class="form-input" placeholder="Full Name">
+        <input type="text" id="userPhoneInput" class="form-input" placeholder="Phone Number">
       </div>
-
-      <div class="step-card">
-        <p class="step-label" data-i18n="q1">1. Area Type</p>
-        <div class="toggle-row">
-          <button type="button" class="pill-btn" data-area="rural" aria-pressed="true" data-i18n="ruralBtn">Village / Gram Panchayat</button>
-          <button type="button" class="pill-btn" data-area="urban" aria-pressed="false" data-i18n="urbanBtn">Town / City</button>
-        </div>
-      </div>
-      <div class="step-card">
-        <p class="step-label" data-i18n="q2">2. Business Category</p>
-        <select id="categorySelect" class="form-select">
-          <option value="dairy" data-i18n="catDairy">Dairy Farming</option>
-          <option value="tailoring" data-i18n="catTailor">Tailoring</option>
-          <option value="grocery" data-i18n="catGrocery">Grocery Store</option>
-        </select>
-      </div>
-      <div class="step-card">
-        <p class="step-label" data-i18n="q3">3. Your Margin Capital (₹)</p>
-        <input type="number" id="marginInput" class="form-input" placeholder="e.g. 50000">
-      </div>
-      <button class="btn btn-primary btn-large btn-block" id="calcBtn" data-i18n="calcBtn">Generate AI Report</button>
     </div>
+
+    <div class="step-card">
+      <p class="step-label">2. Granular Location & Area Type</p>
+      <div class="toggle-row" style="margin-bottom: 12px;">
+        <button type="button" class="pill-btn" data-area="rural" aria-pressed="true" data-i18n="ruralBtn">Village / Gram Panchayat</button>
+        <button type="button" class="pill-btn" data-area="urban" aria-pressed="false" data-i18n="urbanBtn">Town / City</button>
+      </div>
+      <div class="input-grid" style="grid-template-columns: repeat(2, 1fr);">
+        <input type="text" id="stateInput" class="form-input" placeholder="State (e.g. Uttar Pradesh)">
+        <input type="text" id="districtInput" class="form-input" placeholder="District">
+        <input type="text" id="blockInput" class="form-input" placeholder="Block / Tehsil">
+        <input type="text" id="villageInput" class="form-input" placeholder="Village / City Name">
+      </div>
+    </div>
+
+    <div class="step-card">
+      <p class="step-label" data-i18n="q2">3. Business Category</p>
+      <select id="categorySelect" class="form-select">
+        <option value="dairy" data-i18n="catDairy">Dairy Farming</option>
+        <option value="tailoring" data-i18n="catTailor">Tailoring</option>
+        <option value="grocery" data-i18n="catGrocery">Grocery Store</option>
+      </select>
+    </div>
+
+    <div class="step-card">
+      <p class="step-label" data-i18n="q3">4. Your Margin Capital (₹)</p>
+      <input type="number" id="marginInput" class="form-input" placeholder="e.g. 50000">
+    </div>
+
+    <button class="btn btn-primary btn-large btn-block hover-lift" id="calcBtn" data-i18n="calcBtn" style="margin-top: 10px;">Generate AI Report</button>
   </section>
  
-  <!-- REPORT RESULT -->
-  <section class="result-section" id="resultSection" hidden>
-    <div class="wrap">
-     <div class="result-header">
-        <h2 data-i18n="reportTitle">Your Business & Financial Report</h2>
-        <div style="display: flex; gap: 10px;">
-          <button id="readAloudBtn" class="btn btn-secondary" title="Read Aloud">🔊 Listen</button>
-          <button id="downloadBtn" class="btn btn-secondary" data-i18n="downloadBtn">📄 Download / Print</button>
+  <!-- REPORT RESULT SECTION -->
+  <section class="result-section" id="resultSection" hidden style="margin-bottom: 25px;">
+    <div class="unified-card" style="padding: 25px;">
+      <div class="result-header">
+        <h2 data-i18n="reportTitle" style="margin:0;">Your Business & Financial Report</h2>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button id="readAloudBtn" class="btn btn-secondary hover-lift" title="Read Aloud">🔊 Listen</button>
+          <button id="downloadBtn" class="btn btn-secondary hover-lift" data-i18n="downloadBtn">📄 Download / Print</button>
         </div>
       </div>
       <div id="loadingIndicator" class="spinner" hidden></div>
@@ -114,93 +110,91 @@
     </div>
   </section>
 
-  <!-- ADVANCED SCENARIO & SENSITIVITY PLANNER -->
-<section class="scenario-section" style="margin-top: 30px;">
-  <div class="wrap">
-    <div class="step-card">
-      <h3 style="margin-top:0; color: var(--primary);">📈 Advanced Scenario & Sensitivity Planner</h3>
-      <p class="field-hint">Compare your base business plan against an optimized pricing scenario (e.g., 20% higher unit price).</p>
-      
-      <div style="display: flex; gap: 10px; margin-top: 15px;">
-        <button class="btn btn-primary" id="compareScenariosBtn">Compare Pricing Scenarios</button>
+  <!-- USP TOOLS: SURVIVAL SIMULATOR & SCENARIO PLANNER -->
+  <section class="usp-tools-section" style="margin-bottom: 25px; display: flex; gap: 15px; flex-wrap: wrap;">
+    <div class="unified-card" style="flex: 1; min-width: 280px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+      <div>
+        <h3 style="margin-top:0; color: #065F46;">⚡ AI Survival Simulator</h3>
+        <p class="field-hint" style="font-size: 14px; color: var(--text-light);">Test your business resilience against market shocks and seasonal demand drops.</p>
       </div>
-      
-      <div id="scenarioResultBox" style="margin-top: 15px; display: none; padding: 15px; background: #F8FAFC; border-radius: 8px; border: 1px solid var(--line);"></div>
-    </div>
-  </div>
-</section>
-
-  <!-- NEW FEATURE: AI BUSINESS JOURNAL -->
-  <section class="journal-section" id="journalSection">
-    <div class="wrap">
-      <h2>AI Business Journal & Tracking</h2>
-      <p class="hero-sub">Log your daily sales and ask the AI about your financial health.</p>
-      
-      <div class="journal-grid">
-        <!-- Log Entry Form -->
-        <div class="step-card">
-          <h3 style="margin-top:0;">Log Daily Entry</h3>
-          <input type="date" id="journalDate" class="form-input">
-          <input type="number" id="journalSales" class="form-input" placeholder="Sales Revenue (₹)">
-          <input type="number" id="journalExpenses" class="form-input" placeholder="Expenses (₹)">
-          <input type="number" id="journalUnits" class="form-input" placeholder="Units Sold (Optional)">
-          <button class="btn btn-primary btn-block" id="logJournalBtn" style="margin-top: 15px;">Save Entry</button>
-          <p id="journalLogStatus" style="color: #2563EB; font-weight: bold; display: none; margin-top:10px;">Saved successfully!</p>
-        </div>
-      </div>
+      <button id="openSimModalBtn" class="btn btn-primary hover-lift" style="background: #10B981; margin-top: 15px;">Open Simulator</button>
     </div>
 
-    <!-- Journal History Table Container -->
-<div class="step-card" style="margin-top: 20px;">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-    <h3 style="margin:0;">Recent Ledger Entries</h3>
-    <button class="btn btn-secondary" id="loadEntriesBtn" style="padding: 6px 12px; font-size: 13px;">Refresh Table</button>
-  </div>
-  <div style="overflow-x: auto;">
-    <table id="journalTable" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
-      <thead>
-        <tr style="border-bottom: 2px solid var(--line); color: var(--text-light);">
-          <th style="padding: 8px;">Date</th>
-          <th style="padding: 8px;">Sales (₹)</th>
-          <th style="padding: 8px;">Expenses (₹)</th>
-          <th style="padding: 8px;">Units Sold</th>
-        </tr>
-      </thead>
-      <tbody id="journalTableBody">
-        <tr><td colspan="4" style="padding: 12px; text-align: center; color: var(--text-light);">Click 'Refresh Table' to load entries.</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
+    <div class="unified-card" style="flex: 1; min-width: 280px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+      <div>
+        <h3 style="margin-top:0; color: var(--primary);">📈 Scenario & Pricing Planner</h3>
+        <p class="field-hint" style="font-size: 14px; color: var(--text-light);">Compare base plans against optimized pricing models to lower breakeven points.</p>
+      </div>
+      <button class="btn btn-primary hover-lift" id="compareScenariosBtn" style="margin-top: 15px;">Run Scenario Check</button>
+    </div>
+  </section>
+
+  <div id="scenarioResultBox" class="unified-card" style="margin-bottom: 25px; display: none; padding: 20px;"></div>
+
+  <!-- AI BUSINESS JOURNAL & TRACKING -->
+  <section class="journal-section unified-card" style="padding: 25px; margin-bottom: 25px;" id="journalSection">
+    <h2 style="margin-top:0;">AI Business Journal & Tracking</h2>
+    <p class="hero-sub" style="font-size: 15px; margin-bottom: 20px;">Log your daily sales and query your ledger instantly using Gemini AI.</p>
+    
+    <div class="journal-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <!-- Log Entry Form -->
+      <div class="step-card" style="margin-bottom:0;">
+        <h3 style="margin-top:0;">Log Daily Entry</h3>
+        <input type="date" id="journalDate" class="form-input">
+        <input type="number" id="journalSales" class="form-input" placeholder="Sales Revenue (₹)">
+        <input type="number" id="journalExpenses" class="form-input" placeholder="Expenses (₹)">
+        <input type="number" id="journalUnits" class="form-input" placeholder="Units Sold (Optional)">
+        <button class="btn btn-primary btn-block hover-lift" id="logJournalBtn" style="margin-top: 15px;">Save Entry</button>
+        <p id="journalLogStatus" style="color: var(--primary); font-weight: bold; display: none; margin-top:10px;">Saved successfully!</p>
+      </div>
+
+      <!-- Ask Ledger AI Form -->
+      <div class="step-card" style="margin-bottom:0; background: #F8FAFC; border-color: var(--line);">
+        <h3 style="margin-top:0;">Ask Your Ledger</h3>
+        <p style="font-size: 13px; color: var(--text-light);">e.g., "What was my highest sales day?" or "Show total expenses."</p>
+        <input type="text" id="journalQuery" class="form-input" placeholder="Ask AI about records...">
+        <button class="btn btn-primary btn-block hover-lift" id="askJournalBtn" style="margin-top: 15px; background: #0284C7;">Ask Ledger AI</button>
+        <div id="journalAnswer" style="margin-top: 12px; font-weight: 500; font-size: 14px;"></div>
+      </div>
+    </div>
+
+    <!-- Journal History Table -->
+    <div class="step-card" style="margin-top: 20px; margin-bottom: 0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h3 style="margin:0;">Recent Ledger Records</h3>
+        <button class="btn btn-secondary hover-lift" id="loadEntriesBtn" style="padding: 6px 12px; font-size: 13px;">Refresh Table</button>
+      </div>
+      <div style="overflow-x: auto;">
+        <table id="journalTable" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+          <thead>
+            <tr style="border-bottom: 2px solid var(--line); color: var(--text-light);">
+              <th style="padding: 8px;">Date</th>
+              <th style="padding: 8px;">Sales (₹)</th>
+              <th style="padding: 8px;">Expenses (₹)</th>
+              <th style="padding: 8px;">Units Sold</th>
+            </tr>
+          </thead>
+          <tbody id="journalTableBody">
+            <tr><td colspan="4" style="padding: 12px; text-align: center; color: var(--text-light);">Click 'Refresh Table' to load entries.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- REQUIRED DOCUMENTS CHECKLIST -->
+  <section class="documents-section unified-card" style="padding: 25px;">
+    <h3 style="margin-top:0" data-i18n="docsTitle">Required Documents Checklist</h3>
+    <p class="field-hint" style="color: var(--text-light); font-size: 14px;">Keep these ready before visiting the local bank or Common Service Center (CSC).</p>
+    <ul class="doc-checklist">
+      <li><label><input type="checkbox"> <span>Passport Size Photographs (2)</span></label></li>
+      <li><label><input type="checkbox"> <span>Identity Proof (Aadhaar/Voter ID/PAN)</span></label></li>
+      <li><label><input type="checkbox"> <span>Address Proof (Electricity Bill/Ration Card)</span></label></li>
+      <li><label><input type="checkbox"> <span>Quotation of Machinery / Equipment</span></label></li>
+      <li><label><input type="checkbox"> <span>Project Report (ArthSetu AI Report)</span></label></li>
+    </ul>
   </section>
 </main>
-
-<!-- REQUIRED DOCUMENTS CHECKLIST -->
-  <section class="documents-section" id="documentsSection">
-    <div class="wrap">
-      <div class="step-card">
-        <h3 style="margin-top:0" data-i18n="docsTitle">Required Documents Checklist</h3>
-        <p class="field-hint">Keep these ready before visiting the bank or CSC center.</p>
-        <ul class="doc-checklist">
-          <li>
-            <label><input type="checkbox"> <span>Passport Size Photographs (2)</span></label>
-          </li>
-          <li>
-            <label><input type="checkbox"> <span>Identity Proof (Voter ID, or PAN)</span></label>
-          </li>
-          <li>
-            <label><input type="checkbox"> <span>Address Proof (Electricity Bill or Ration Card)</span></label>
-          </li>
-          <li>
-            <label><input type="checkbox"> <span>Quotation of Machinery / Equipment</span></label>
-          </li>
-          <li>
-            <label><input type="checkbox"> <span>Project Report (ArthSetu AI Report)</span></label>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </section>
 
 <!-- FLOATING AI CHAT WIDGET -->
 <button id="chatToggleBtn" class="chat-toggle-btn" aria-label="Open AI Assistant" title="Open AI Assistant">💬</button>
@@ -222,26 +216,47 @@
   </div>
 </div>
 
+<!-- AUTHENTICATION MODAL -->
+<div id="authModal" class="auth-modal-overlay hidden">
+  <div class="auth-modal-content">
+    <button id="closeAuthModalBtn" class="close-chat-btn" style="color: var(--text-main); float: right; font-size: 20px; cursor: pointer;">✖</button>
+    <div class="auth-tabs">
+      <button class="tab-btn active" data-tab="login">Login</button>
+      <button class="tab-btn" data-tab="signup">Sign Up</button>
+    </div>
+    
+    <form id="loginForm" class="auth-form">
+      <h3 style="margin-top:0;">Welcome Back</h3>
+      <input type="email" class="form-input" placeholder="Email Address" required>
+      <input type="password" class="form-input" placeholder="Password" required>
+      <button type="submit" class="btn btn-primary btn-block hover-lift" style="margin-top: 15px;">Login</button>
+    </form>
 
-<!-- Trigger Button to Open Simulation Popup -->
-<button id="openSimModalBtn" class="btn btn-secondary hover-lift" style="margin: 15px 0;">📊 Open Survival Simulation Engine</button>
+    <form id="signupForm" class="auth-form hidden">
+      <h3 style="margin-top:0;">Create an Account</h3>
+      <input type="text" class="form-input" placeholder="Full Name" required>
+      <input type="email" class="form-input" placeholder="Email Address" required>
+      <input type="password" class="form-input" placeholder="Create Password" required>
+      <button type="submit" class="btn btn-primary btn-block hover-lift" style="margin-top: 15px;">Sign Up</button>
+    </form>
+  </div>
+</div>
 
-<!-- Simulation Popup Modal -->
+<!-- SURVIVAL SIMULATION MODAL -->
 <div id="simModalOverlay" class="auth-modal-overlay hidden">
-  <div class="auth-modal-content" style="width: 500px; max-width: 95vw;">
+  <div class="auth-modal-content" style="width: 480px; max-width: 95vw;">
     <button id="closeSimModalBtn" class="close-chat-btn" style="color: var(--text-main); float: right; font-size: 20px; cursor: pointer;">✖</button>
     <h3 style="margin-top:0; color: #065F46;">⚡ AI Business Survival Simulator</h3>
-    <p class="field-hint" style="font-size: 13px; color: var(--text-light); margin-bottom: 15px;">Test business resilience against market shocks and seasonal drops for 12 months.</p>
+    <p class="field-hint" style="font-size: 13px; color: var(--text-light); margin-bottom: 15px;">Simulate 1,000 seasonal variations to estimate your 12-month survival rate.</p>
     
-    <div class="input-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px;">
+    <div class="input-grid" style="grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
       <input type="number" id="simInitialCash" class="form-input" placeholder="Initial Capital (₹)" value="50000">
       <input type="number" id="simMonthlyRev" class="form-input" placeholder="Monthly Revenue (₹)" value="30000">
       <input type="number" id="simMonthlyExp" class="form-input" placeholder="Monthly Expenses (₹)" value="18000">
       <input type="number" id="simEmi" class="form-input" placeholder="Monthly EMI (₹)" value="4500">
     </div>
     
-    <button class="btn btn-primary btn-block hover-lift" id="runSimBtn" style="background: #10B981;">Run 1,000 Market Simulations</button>
-    
+    <button class="btn btn-primary btn-block hover-lift" id="runSimBtn" style="background: #10B981;">Run Simulations</button>
     <div id="simulationResult" style="margin-top: 15px; display: none; padding: 12px; background: #f0fdf4; border-radius: 8px; border: 1px solid #A7F3D0;"></div>
   </div>
 </div>
@@ -253,34 +268,5 @@
 </footer>
 
 <script src="script.js"></script>
-
-<!-- AUTHENTICATION MODAL -->
-<div id="authModal" class="auth-modal-overlay hidden">
-  <div class="auth-modal-content">
-    <button id="closeAuthModalBtn" class="close-chat-btn" style="color: var(--text-main); float: right; font-size: 20px; cursor: pointer;">✖</button>
-    <div class="auth-tabs">
-      <button class="tab-btn active" data-tab="login">Login</button>
-      <button class="tab-btn" data-tab="signup">Sign Up</button>
-    </div>
-    
-    <!-- Login Form -->
-    <form id="loginForm" class="auth-form">
-      <h3 style="margin-top:0;">Welcome Back</h3>
-      <input type="email" class="form-input" placeholder="Email Address" required>
-      <input type="password" class="form-input" placeholder="Password" required>
-      <button type="submit" class="btn btn-primary btn-block hover-lift" style="margin-top: 15px;">Login</button>
-    </form>
-
-    <!-- Sign Up Form -->
-    <form id="signupForm" class="auth-form hidden">
-      <h3 style="margin-top:0;">Create an Account</h3>
-      <input type="text" class="form-input" placeholder="Full Name" required>
-      <input type="email" class="form-input" placeholder="Email Address" required>
-      <input type="password" class="form-input" placeholder="Create Password" required>
-      <button type="submit" class="btn btn-primary btn-block hover-lift" style="margin-top: 15px;">Sign Up</button>
-    </form>
-  </div>
-</div>
-
 </body>
 </html>

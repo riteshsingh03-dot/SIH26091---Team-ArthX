@@ -75,6 +75,10 @@ function setupUI() {
   const askBtn = document.getElementById("askJournalBtn");
   if(askBtn) askBtn.addEventListener("click", askJournal);
 
+  // --- NEW: Journal Table Loader Listener ---
+  const loadEntriesBtn = document.getElementById("loadEntriesBtn");
+  if(loadEntriesBtn) loadEntriesBtn.addEventListener("click", fetchJournalEntries);
+
   // Set today's date automatically in the journal form
   const dateEl = document.getElementById("journalDate");
   if(dateEl) dateEl.valueAsDate = new Date();
@@ -183,7 +187,6 @@ function setupUI() {
   }
 
   // --- SCENARIO COMPARISON & SENSITIVITY LOGIC ---
-document.addEventListener("DOMContentLoaded", () => {
   const compareBtn = document.getElementById("compareScenariosBtn");
   if (compareBtn) {
     compareBtn.addEventListener("click", async () => {
@@ -225,41 +228,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-
-  // --- JOURNAL TABLE LOADER ---
-  const loadEntriesBtn = document.getElementById("loadEntriesBtn");
-  if (loadEntriesBtn) {
-    loadEntriesBtn.addEventListener("click", fetchJournalEntries);
-  }
-});
-
-async function fetchJournalEntries() {
-  const tbody = document.getElementById("journalTableBody");
-  if (!tbody) return;
-
-  tbody.innerHTML = `<tr><td colspan="4" style="padding: 12px; text-align: center;">Loading entries...</td></tr>`;
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/journal/entries`);
-    const entries = await response.json();
-
-    if (entries.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4" style="padding: 12px; text-align: center; color: var(--text-light);">No journal entries found. Log one above!</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = entries.map(entry => `
-      <tr style="border-bottom: 1px solid var(--line);">
-        <td style="padding: 8px;">${entry.entry_date}</td>
-        <td style="padding: 8px; color: #10B981;">₹${entry.sales_revenue || 0}</td>
-        <td style="padding: 8px; color: #EF4444;">₹${entry.expenses || 0}</td>
-        <td style="padding: 8px;">${entry.units_sold || '-'}</td>
-      </tr>
-    `).join('');
-  } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="4" style="padding: 12px; text-align: center; color: red;">Failed to load journal records.</td></tr>`;
-  }
-}
 }
 
 function setupVoice() {
@@ -469,7 +437,8 @@ async function submitJournalEntry() {
       document.getElementById("journalSales").value = "";
       document.getElementById("journalExpenses").value = "";
       document.getElementById("journalUnits").value = "";
-    }
+      fetchJournalEntries();
+     }
   } catch (e) {
     alert("Failed to save entry.");
   }
@@ -506,6 +475,34 @@ async function askJournal() {
     }
   } catch (e) {
     answerDiv.innerHTML = `<span style="color:red">Failed to reach the AI.</span>`;
+  }
+}
+
+async function fetchJournalEntries() {
+  const tbody = document.getElementById("journalTableBody");
+  if (!tbody) return;
+
+  tbody.innerHTML = `<tr><td colspan="4" style="padding: 12px; text-align: center;">Loading entries...</td></tr>`;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/journal/entries`);
+    const entries = await response.json();
+
+    if (!entries || entries.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="padding: 12px; text-align: center; color: var(--text-light);">No journal entries found. Log one above!</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = entries.map(entry => `
+      <tr style="border-bottom: 1px solid var(--line);">
+        <td style="padding: 8px;">${entry.entry_date}</td>
+        <td style="padding: 8px; color: #10B981;">₹${entry.sales_revenue || 0}</td>
+        <td style="padding: 8px; color: #EF4444;">₹${entry.expenses || 0}</td>
+        <td style="padding: 8px;">${entry.units_sold || '-'}</td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="4" style="padding: 12px; text-align: center; color: red;">Failed to load journal records.</td></tr>`;
   }
 }
 
