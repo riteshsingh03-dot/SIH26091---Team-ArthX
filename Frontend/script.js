@@ -134,6 +134,132 @@ function setupUI() {
       authModal.classList.add("hidden");
     });
   }
+
+  // --- SIMULATION MODAL & ENGINE LOGIC ---
+  const openSimBtn = document.getElementById("openSimModalBtn");
+  const simModal = document.getElementById("simModalOverlay");
+  const closeSimBtn = document.getElementById("closeSimModalBtn");
+  const runSimBtn = document.getElementById("runSimBtn");
+
+  if (openSimBtn && simModal) {
+    openSimBtn.addEventListener("click", () => simModal.classList.remove("hidden"));
+    closeSimBtn.addEventListener("click", () => simModal.classList.add("hidden"));
+  }
+
+  if (runSimBtn) {
+    runSimBtn.addEventListener("click", async () => {
+      const payload = {
+        initial_cash: parseFloat(document.getElementById("simInitialCash").value) || 0,
+        base_monthly_revenue: parseFloat(document.getElementById("simMonthlyRev").value) || 0,
+        base_monthly_expenses: parseFloat(document.getElementById("simMonthlyExp").value) || 0,
+        emi: parseFloat(document.getElementById("simEmi").value) || 0,
+        iterations: 1000
+      };
+
+      const resultBox = document.getElementById("simulationResult");
+      resultBox.style.display = "block";
+      resultBox.innerHTML = "<em>Simulating 1,000 market conditions...</em>";
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/simulate/survival`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+
+        let badgeColor = data.survival_probability_pct > 80 ? '#10B981' : (data.survival_probability_pct > 50 ? '#F59E0B' : '#EF4444');
+
+        resultBox.innerHTML = `
+          <h4 style="margin: 0 0 8px 0; color: #1E293B;">Simulation Results</h4>
+          <p style="margin: 4px 0;">Survival Probability: <strong style="color: ${badgeColor}; font-size: 16px;">${data.survival_probability_pct}%</strong></p>
+          <p style="margin: 4px 0;">Risk Level: <strong>${data.risk_level}</strong></p>
+          <p style="font-size: 12px; color: var(--text-light); margin-top: 6px;">Tested across ${data.simulated_iterations} randomized seasonal demand cycles.</p>
+        `;
+      } catch (e) {
+        resultBox.innerHTML = `<span style="color:red">Simulation engine failed to connect. Ensure backend is running.</span>`;
+      }
+    });
+  }
+
+  // --- SCENARIO COMPARISON & SENSITIVITY LOGIC ---
+document.addEventListener("DOMContentLoaded", () => {
+  const compareBtn = document.getElementById("compareScenariosBtn");
+  if (compareBtn) {
+    compareBtn.addEventListener("click", async () => {
+      const resultBox = document.getElementById("scenarioResultBox");
+      resultBox.style.display = "block";
+      resultBox.innerHTML = "<em>Running scenario matrix...</em>";
+
+      const payload = {
+        base_inputs: {
+          project_cost: 1000000,
+          margin_pct: 0.10,
+          annual_rate_pct: 8.0,
+          tenure_months: 84,
+          fixed_costs: 50000,
+          price_per_unit: 100,
+          variable_cost_per_unit: 60
+        },
+        scenarios: {
+          scenario_a: { price_per_unit: 100 },
+          scenario_b: { price_per_unit: 120 }
+        }
+      };
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/scenarios/compare`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+
+        resultBox.innerHTML = `
+          <h4 style="margin: 0 0 8px 0;">Comparison Results (Breakeven Analysis)</h4>
+          <p style="margin: 4px 0;">Base Scenario (₹100/unit): <strong>${data.scenario_a?.breakeven_units || 'N/A'} units</strong></p>
+          <p style="margin: 4px 0;">Optimized Scenario (₹120/unit): <strong style="color: #10B981;">${data.scenario_b?.breakeven_units || 'N/A'} units</strong> (Lower breakeven point due to higher margin per unit).</p>
+        `;
+      } catch (e) {
+        resultBox.innerHTML = `<span style="color:red">Failed to fetch scenario comparison from backend.</span>`;
+      }
+    });
+  }
+
+  // --- JOURNAL TABLE LOADER ---
+  const loadEntriesBtn = document.getElementById("loadEntriesBtn");
+  if (loadEntriesBtn) {
+    loadEntriesBtn.addEventListener("click", fetchJournalEntries);
+  }
+});
+
+async function fetchJournalEntries() {
+  const tbody = document.getElementById("journalTableBody");
+  if (!tbody) return;
+
+  tbody.innerHTML = `<tr><td colspan="4" style="padding: 12px; text-align: center;">Loading entries...</td></tr>`;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/journal/entries`);
+    const entries = await response.json();
+
+    if (entries.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="padding: 12px; text-align: center; color: var(--text-light);">No journal entries found. Log one above!</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = entries.map(entry => `
+      <tr style="border-bottom: 1px solid var(--line);">
+        <td style="padding: 8px;">${entry.entry_date}</td>
+        <td style="padding: 8px; color: #10B981;">₹${entry.sales_revenue || 0}</td>
+        <td style="padding: 8px; color: #EF4444;">₹${entry.expenses || 0}</td>
+        <td style="padding: 8px;">${entry.units_sold || '-'}</td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="4" style="padding: 12px; text-align: center; color: red;">Failed to load journal records.</td></tr>`;
+  }
+}
 }
 
 function setupVoice() {

@@ -114,6 +114,22 @@
     </div>
   </section>
 
+  <!-- ADVANCED SCENARIO & SENSITIVITY PLANNER -->
+<section class="scenario-section" style="margin-top: 30px;">
+  <div class="wrap">
+    <div class="step-card">
+      <h3 style="margin-top:0; color: var(--primary);">📈 Advanced Scenario & Sensitivity Planner</h3>
+      <p class="field-hint">Compare your base business plan against an optimized pricing scenario (e.g., 20% higher unit price).</p>
+      
+      <div style="display: flex; gap: 10px; margin-top: 15px;">
+        <button class="btn btn-primary" id="compareScenariosBtn">Compare Pricing Scenarios</button>
+      </div>
+      
+      <div id="scenarioResultBox" style="margin-top: 15px; display: none; padding: 15px; background: #F8FAFC; border-radius: 8px; border: 1px solid var(--line);"></div>
+    </div>
+  </div>
+</section>
+
   <!-- NEW FEATURE: AI BUSINESS JOURNAL -->
   <section class="journal-section" id="journalSection">
     <div class="wrap">
@@ -133,6 +149,29 @@
         </div>
       </div>
     </div>
+
+    <!-- Journal History Table Container -->
+<div class="step-card" style="margin-top: 20px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+    <h3 style="margin:0;">Recent Ledger Entries</h3>
+    <button class="btn btn-secondary" id="loadEntriesBtn" style="padding: 6px 12px; font-size: 13px;">Refresh Table</button>
+  </div>
+  <div style="overflow-x: auto;">
+    <table id="journalTable" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+      <thead>
+        <tr style="border-bottom: 2px solid var(--line); color: var(--text-light);">
+          <th style="padding: 8px;">Date</th>
+          <th style="padding: 8px;">Sales (₹)</th>
+          <th style="padding: 8px;">Expenses (₹)</th>
+          <th style="padding: 8px;">Units Sold</th>
+        </tr>
+      </thead>
+      <tbody id="journalTableBody">
+        <tr><td colspan="4" style="padding: 12px; text-align: center; color: var(--text-light);">Click 'Refresh Table' to load entries.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
   </section>
 </main>
 
@@ -183,6 +222,30 @@
   </div>
 </div>
 
+
+<!-- Trigger Button to Open Simulation Popup -->
+<button id="openSimModalBtn" class="btn btn-secondary hover-lift" style="margin: 15px 0;">📊 Open Survival Simulation Engine</button>
+
+<!-- Simulation Popup Modal -->
+<div id="simModalOverlay" class="auth-modal-overlay hidden">
+  <div class="auth-modal-content" style="width: 500px; max-width: 95vw;">
+    <button id="closeSimModalBtn" class="close-chat-btn" style="color: var(--text-main); float: right; font-size: 20px; cursor: pointer;">✖</button>
+    <h3 style="margin-top:0; color: #065F46;">⚡ AI Business Survival Simulator</h3>
+    <p class="field-hint" style="font-size: 13px; color: var(--text-light); margin-bottom: 15px;">Test business resilience against market shocks and seasonal drops for 12 months.</p>
+    
+    <div class="input-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px;">
+      <input type="number" id="simInitialCash" class="form-input" placeholder="Initial Capital (₹)" value="50000">
+      <input type="number" id="simMonthlyRev" class="form-input" placeholder="Monthly Revenue (₹)" value="30000">
+      <input type="number" id="simMonthlyExp" class="form-input" placeholder="Monthly Expenses (₹)" value="18000">
+      <input type="number" id="simEmi" class="form-input" placeholder="Monthly EMI (₹)" value="4500">
+    </div>
+    
+    <button class="btn btn-primary btn-block hover-lift" id="runSimBtn" style="background: #10B981;">Run 1,000 Market Simulations</button>
+    
+    <div id="simulationResult" style="margin-top: 15px; display: none; padding: 12px; background: #f0fdf4; border-radius: 8px; border: 1px solid #A7F3D0;"></div>
+  </div>
+</div>
+
 <footer class="site-footer">
   <div class="wrap">
     <p>&copy; Copyright of ArthX 2026</p>
@@ -218,5 +281,6 @@
     </form>
   </div>
 </div>
+
 </body>
 </html>
