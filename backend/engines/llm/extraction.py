@@ -15,11 +15,19 @@ Return ONLY valid JSON, no other text, matching exactly this shape:
   "project_cost": <number or null>,
   "state": <string or null>,
   "business_category": <string or null>,
-  "margin_capital": <number or null>
+  "margin_capital": <number or null>,
+  "village_name": <string or null>,
+  "block": <string or null>,
+  "district": <string or null>
 }}
 
 If a field isn't mentioned, use null. Do not guess or invent values.
 Amounts in "lakh" mean multiply by 100000 (e.g. "1 lakh" = 100000).
+village_name, block, and district refer to the user's location in India --
+extract whichever of these the user mentions (e.g. "I'm in Barasat village,
+North 24 Parganas district" -> village_name: "Barasat", district: "North 24 Parganas").
+If the user only gives one place name and it's ambiguous whether it's a village,
+block, or district, put it in village_name.
 
 User message: "{message}"
 """

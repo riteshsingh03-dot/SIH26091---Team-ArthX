@@ -54,6 +54,23 @@ CREATE TABLE IF NOT EXISTS market_seed_data (
     last_updated DATE
 );
 
+CREATE TABLE IF NOT EXISTS market_competitors (
+    id SERIAL PRIMARY KEY,
+    location_id INTEGER NOT NULL REFERENCES locations(id),
+    business_category TEXT NOT NULL,
+    osm_place_id TEXT,
+    name TEXT NOT NULL,
+    latitude NUMERIC,
+    longitude NUMERIC,
+    distance_km NUMERIC,
+    business_status TEXT,
+    address TEXT,
+    phone TEXT,
+    website TEXT,
+    source TEXT DEFAULT 'openstreetmap_overpass',
+    last_updated TIMESTAMP DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS eligibility_rules (
     id SERIAL PRIMARY KEY,
     scheme_id INTEGER NOT NULL REFERENCES schemes(id),
