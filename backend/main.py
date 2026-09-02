@@ -174,7 +174,12 @@ def chat(req: ChatRequest):
     business_category=extracted.get("business_category"),
     project_cost=extracted["project_cost"],
     loan_amount=loan["loan_amount"],
-    location={"village_name": None, "block": None, "district": None, "state": extracted.get("state")},
+    location={
+    "village_name": extracted.get("village_name"),
+    "block": extracted.get("block"),
+    "district": extracted.get("district"),
+    "state": extracted.get("state"),
+},
     experience_level=req.experience_level,
     competitor_mapping=competitor_mapping,
 )
