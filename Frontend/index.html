@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ArthSetu — AI Business Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+ 
+<header class="site-header">
+  <div class="wrap header-row">
+    <div class="brand">
+      <span class="brand-mark">अ</span>
+      <div class="brand-text">
+        <span class="brand-name">ArthSetu</span>
+        <span class="brand-tagline" data-i18n="tagline">Smart business funding, in plain words</span>
+      </div>
+    </div>
+    <!-- Multilingual Dropdown -->
+    <select id="langSelect" class="lang-dropdown">
+      <option value="en">English</option>
+      <option value="hi">हिंदी (Hindi)</option>
+      <option value="bn">বাংলা (Bengali)</option>
+      <option value="mr">मराठी (Marathi)</option>
+      <option value="te">తెలుగు (Telugu)</option>
+      <option value="ta">தமிழ் (Tamil)</option>
+    </select>
+  </div>
+</header>
+ 
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <h1 data-i18n="heroTitle">Turn your savings into a funded business plan.</h1>
+      <p class="hero-sub" data-i18n="heroSub">Tell us your location and available cash. We calculate your total budget, map local competitors, and match you with government schemes.</p>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS FLOWCHART -->
+  <section class="flowchart-section wrap">
+    <h3 data-i18n="flowTitle">How ArthSetu Works</h3>
+    <div class="flow-steps">
+      <div class="step"><span>1</span> <p data-i18n="flow1">Input Details & Margin Capital</p></div>
+      <div class="step-arrow">→</div>
+      <div class="step"><span>2</span> <p data-i18n="flow2">AI Analyzes Market & Calculates Loan (90%)</p></div>
+      <div class="step-arrow">→</div>
+      <div class="step"><span>3</span> <p data-i18n="flow3">Get Scheme Match & EMI Plan</p></div>
+    </div>
+  </section>
+ 
+  <!-- AI CHAT MODULE -->
+  <section class="chat-section" id="chat">
+    <div class="wrap">
+      <h2 data-i18n="chatTitle">Talk to our AI Assistant</h2>
+      <div class="chat-container">
+        <div id="chatHistory" class="chat-history">
+          <div class="chat-bubble ai" data-i18n="chatGreeting">Hello! Tell me about your business idea and how much money you have to start.</div>
+        </div>
+        <div class="chat-input-area">
+          <button id="voiceBtn" class="voice-btn" title="Click to speak">🎤</button>
+          <input type="text" id="chatInput" placeholder="Type or speak here...">
+          <button class="btn btn-primary" id="chatBtn" data-i18n="sendBtn">Send</button>
+        </div>
+      </div>
+    </div>
+  </section>
+ 
+  <!-- MANUAL WIZARD -->
+  <section class="wizard-section" id="wizard">
+    <div class="wrap">
+      <h2 data-i18n="wizardTitle">Or enter details manually</h2>
+      <div class="step-card">
+        <p class="step-label" data-i18n="q1">1. Area Type</p>
+        <div class="toggle-row">
+          <button type="button" class="pill-btn" data-area="rural" aria-pressed="true" data-i18n="ruralBtn">Village / Gram Panchayat</button>
+          <button type="button" class="pill-btn" data-area="urban" aria-pressed="false" data-i18n="urbanBtn">Town / City</button>
+        </div>
+      </div>
+      <div class="step-card">
+        <p class="step-label" data-i18n="q2">2. Business Category</p>
+        <select id="categorySelect" class="form-select">
+          <option value="dairy" data-i18n="catDairy">Dairy Farming</option>
+          <option value="tailoring" data-i18n="catTailor">Tailoring</option>
+          <option value="grocery" data-i18n="catGrocery">Grocery Store</option>
+        </select>
+      </div>
+      <div class="step-card">
+        <p class="step-label" data-i18n="q3">3. Your Margin Capital (₹)</p>
+        <input type="number" id="marginInput" class="form-input" placeholder="e.g. 50000">
+      </div>
+      <button class="btn btn-primary btn-large btn-block" id="calcBtn" data-i18n="calcBtn">Generate AI Report</button>
+    </div>
+  </section>
+ 
+  <!-- REPORT RESULT -->
+  <section class="result-section" id="resultSection" hidden>
+    <div class="wrap">
+      <div class="result-header">
+        <h2 data-i18n="reportTitle">Your Business & Financial Report</h2>
+        <button id="downloadBtn" class="btn btn-secondary" data-i18n="downloadBtn">📄 Download / Print</button>
+      </div>
+      <div id="loadingIndicator" class="spinner" hidden></div>
+      <div id="resultContent"></div>
+    </div>
+  </section>
+</main>
+<script src="script.js"></script>
+</body>
+</html>
