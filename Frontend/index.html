@@ -19,7 +19,7 @@
         <span class="brand-tagline" data-i18n="tagline">Smart business funding, in plain words</span>
       </div>
     </div>
-    <!-- Multilingual Dropdown -->
+    <!-- Multilingual Dropdown (Preserved your extended list) -->
     <select id="langSelect" class="lang-dropdown">
       <option value="en">English</option>
       <option value="hi">हिंदी (Hindi)</option>
@@ -99,15 +99,73 @@
   <!-- REPORT RESULT -->
   <section class="result-section" id="resultSection" hidden>
     <div class="wrap">
-      <div class="result-header">
+     <div class="result-header">
         <h2 data-i18n="reportTitle">Your Business & Financial Report</h2>
-        <button id="downloadBtn" class="btn btn-secondary" data-i18n="downloadBtn">📄 Download / Print</button>
+        <div style="display: flex; gap: 10px;">
+          <button id="readAloudBtn" class="btn btn-secondary" title="Read Aloud">🔊 Listen</button>
+          <button id="downloadBtn" class="btn btn-secondary" data-i18n="downloadBtn">📄 Download / Print</button>
+        </div>
       </div>
       <div id="loadingIndicator" class="spinner" hidden></div>
       <div id="resultContent"></div>
     </div>
   </section>
+
+  <!-- NEW FEATURE: AI BUSINESS JOURNAL -->
+  <section class="journal-section" id="journalSection">
+    <div class="wrap">
+      <h2>AI Business Journal & Tracking</h2>
+      <p class="hero-sub">Log your daily sales and ask the AI about your financial health.</p>
+      
+      <div class="journal-grid">
+        <!-- Log Entry Form -->
+        <div class="step-card">
+          <h3 style="margin-top:0;">Log Daily Entry</h3>
+          <input type="date" id="journalDate" class="form-input">
+          <input type="number" id="journalSales" class="form-input" placeholder="Sales Revenue (₹)">
+          <input type="number" id="journalExpenses" class="form-input" placeholder="Expenses (₹)">
+          <input type="number" id="journalUnits" class="form-input" placeholder="Units Sold (Optional)">
+          <button class="btn btn-primary btn-block" id="logJournalBtn" style="margin-top: 15px;">Save Entry</button>
+          <p id="journalLogStatus" style="color: #2563EB; font-weight: bold; display: none; margin-top:10px;">Saved successfully!</p>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
+
+<!-- REQUIRED DOCUMENTS CHECKLIST -->
+  <section class="documents-section" id="documentsSection">
+    <div class="wrap">
+      <div class="step-card">
+        <h3 style="margin-top:0" data-i18n="docsTitle">Required Documents Checklist</h3>
+        <p class="field-hint">Keep these ready before visiting the bank or CSC center.</p>
+        <ul class="doc-checklist">
+          <li>
+            <label><input type="checkbox"> <span>Passport Size Photographs (2)</span></label>
+          </li>
+          <li>
+            <label><input type="checkbox"> <span>Identity Proof (Aadhaar, Voter ID, or PAN)</span></label>
+          </li>
+          <li>
+            <label><input type="checkbox"> <span>Address Proof (Electricity Bill or Ration Card)</span></label>
+          </li>
+          <li>
+            <label><input type="checkbox"> <span>Quotation of Machinery / Equipment</span></label>
+          </li>
+          <li>
+            <label><input type="checkbox"> <span>Project Report (ArthSetu AI Report)</span></label>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>&copy; Copyright of ArthX 2026</p>
+  </div>
+</footer>
+
 <script src="script.js"></script>
 </body>
 </html>

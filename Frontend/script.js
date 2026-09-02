@@ -60,9 +60,36 @@ function setupUI() {
     });
   });
 
+  // --- NEW: READ ALOUD LOGIC ---
+function readReportAloud() {
+  const content = document.getElementById("resultContent").innerText;
+  if (!content) return alert("No report to read yet!");
+
+  // Stop any currently playing audio
+  window.speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(content);
+  // Matches the language to the current UI selection (English or Hindi)
+  utterance.lang = currentLang === 'en' ? 'en-IN' : 'hi-IN';
+  utterance.rate = 0.9; // Slightly slower for easier understanding
+  
+  window.speechSynthesis.speak(utterance);
+}
+
   document.getElementById("calcBtn").addEventListener("click", submitWizardToFastAPI);
   document.getElementById("chatBtn").addEventListener("click", submitChatToFastAPI);
   document.getElementById("downloadBtn").addEventListener("click", () => window.print());
+  
+  // --- NEW: Journal Event Listeners ---
+  const logBtn = document.getElementById("logJournalBtn");
+  if(logBtn) logBtn.addEventListener("click", submitJournalEntry);
+  
+  const askBtn = document.getElementById("askJournalBtn");
+  if(askBtn) askBtn.addEventListener("click", askJournal);
+
+  // Set today's date automatically in the journal form
+  const dateEl = document.getElementById("journalDate");
+  if(dateEl) dateEl.valueAsDate = new Date();
 }
 
 function setupVoice() {
@@ -186,16 +213,42 @@ function renderReport(data) {
   const loanAmount = data.loan?.loan_amount || 0;
   const emi = data.installment || 0;
   
+  // ORIGINAL SWOT RENDERER
   let swotHTML = "";
   if (data.swot) {
+      // NOTE: If data.swot is a plain string from the backend, we display it directly. 
+      // If it's an object, we use your original fallback logic.
+      let swotContent = typeof data.swot === 'string' ? data.swot.replace(/\n/g, '<br>') : `
+        <p><strong>Strengths:</strong> ${data.swot.strengths || 'N/A'}</p>
+        <p><strong>Weaknesses:</strong> ${data.swot.weaknesses || 'N/A'}</p>
+        <p><strong>Opportunities:</strong> ${data.swot.opportunities || 'N/A'}</p>
+        <p><strong>Threats:</strong> ${data.swot.threats || 'N/A'}</p>
+      `;
+      
       swotHTML = `
       <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 20px 0;">
       <h3 style="margin-top:0">AI Market Analysis (SWOT)</h3>
-      <p><strong>Strengths:</strong> ${data.swot.strengths || 'N/A'}</p>
-      <p><strong>Weaknesses:</strong> ${data.swot.weaknesses || 'N/A'}</p>
-      <p><strong>Opportunities:</strong> ${data.swot.opportunities || 'N/A'}</p>
-      <p><strong>Threats:</strong> ${data.swot.threats || 'N/A'}</p>
+      ${swotContent}
       `;
+  }
+
+  // --- NEW: COMPETITOR MAPPING RENDERER ---
+  let competitorHTML = "";
+  if (data.competitor_mapping && data.competitor_mapping.length > 0) {
+      competitorHTML = `
+      <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 20px 0;">
+      <h3 style="margin-top:0">Nearby Competitors (Live OSM Data)</h3>
+      <ul class="competitor-list">
+        ${data.competitor_mapping.slice(0, 5).map(comp => `
+          <li class="competitor-card">
+            <span class="competitor-name">${comp.name || 'Unnamed Business'}</span>
+            <span class="competitor-dist">${comp.distance_km} km away</span>
+          </li>
+        `).join('')}
+      </ul>
+      `;
+  } else if (data.competitor_mapping && data.competitor_mapping.length === 0) {
+      competitorHTML = `<p><em>No immediate competitors found in the OpenStreetMap database for this radius.</em></p>`;
   }
 
   content.innerHTML = `
@@ -206,6 +259,86 @@ function renderReport(data) {
       <p><strong>Loan Amount (90%):</strong> ₹${loanAmount.toLocaleString('en-IN')}</p>
       <p><strong>Estimated Repayment:</strong> ₹${emi.toLocaleString('en-IN')} per installment</p>
       ${swotHTML}
+      ${competitorHTML}
     </div>
   `;
+}
+
+// ==========================================
+// --- NEW: BUSINESS JOURNAL LOGIC ---
+// ==========================================
+
+async function submitJournalEntry() {
+  const date = document.getElementById("journalDate").value;
+  const sales = parseFloat(document.getElementById("journalSales").value) || 0;
+  const expenses = parseFloat(document.getElementById("journalExpenses").value) || 0;
+  const units = parseFloat(document.getElementById("journalUnits").value) || 0;
+
+  if (!date) return alert("Please select a date.");
+
+  const payload = { entry_date: date, sales_revenue: sales, expenses: expenses, units_sold: units };
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/journal/entry`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (response.ok) {
+      const statusText = document.getElementById("journalLogStatus");
+      statusText.style.display = "block";
+      setTimeout(() => statusText.style.display = "none", 3000);
+      document.getElementById("journalSales").value = "";
+      document.getElementById("journalExpenses").value = "";
+      document.getElementById("journalUnits").value = "";
+    }
+  } catch (e) {
+    alert("Failed to save entry.");
+  }
+}
+
+async function askJournal() {
+  const query = document.getElementById("journalQuery").value;
+  const answerDiv = document.getElementById("journalAnswer");
+  
+  if (!query) return;
+  answerDiv.innerHTML = "<em>Analyzing your ledger...</em>";
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/journal/ask`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: query })
+    });
+    
+    const data = await response.json();
+    
+    if (data.error) {
+       answerDiv.innerHTML = `<span style="color:red">${data.error}</span>`;
+    } else if (data.intent === "summary") {
+       answerDiv.innerHTML = `Total Sales: ₹${data.result.total_sales || 0} | Total Expenses: ₹${data.result.total_expenses || 0}`;
+    } else if (data.intent === "max" || data.intent === "min") {
+       const val = data.result[data.field];
+       answerDiv.innerHTML = `The ${data.intent} ${data.field} was <strong>₹${val}</strong> on ${data.result.entry_date}.`;
+    } else {
+       answerDiv.innerHTML = `Query processed successfully.`;
+    }
+  } catch (e) {
+    answerDiv.innerHTML = `<span style="color:red">Failed to reach the AI.</span>`;
+  }
+}
+// --- NEW: READ ALOUD LOGIC ---
+function readReportAloud() {
+  const content = document.getElementById("resultContent").innerText;
+  if (!content) return alert("No report to read yet!");
+
+  // Stop any currently playing audio
+  window.speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(content);
+  // Matches the language to the current UI selection (English or Hindi)
+  utterance.lang = currentLang === 'en' ? 'en-IN' : 'hi-IN';
+  utterance.rate = 0.9; // Slightly slower for easier understanding
+  
+  window.speechSynthesis.speak(utterance);
 }
