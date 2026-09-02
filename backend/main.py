@@ -18,8 +18,11 @@ from engines.financial.sensitivity import compare_scenarios, run_sensitivity_ana
 from engines.journal.entries import add_journal_entry, get_entries
 from engines.journal.query import answer_journal_question
 
-from engines.market.competitor_service import refresh_competitors, get_stored_competitors
-from engines.market.competitor_service import refresh_competitors, get_stored_competitors, resolve_location_id
+from engines.market.competitor_service import (
+    refresh_competitors,
+    get_stored_competitors,
+    resolve_location_id,
+)
 
 app = FastAPI()
 
@@ -32,19 +35,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class SensitivityRequest(BaseModel):
     base_inputs: dict
     vary_field: str
     values: list[float]
 
+
 class ScenarioComparisonRequest(BaseModel):
     base_inputs: dict
     scenarios: dict[str, dict]
+
 
 class ChatRequest(BaseModel):
     message: str
     experience_level: str = "intermediate"
     location_id: int | None = None
+
 
 class JournalEntryRequest(BaseModel):
     entry_date: str
@@ -53,10 +60,10 @@ class JournalEntryRequest(BaseModel):
     units_sold: float | None = None
     notes: str | None = None
 
+
 class JournalQuestionRequest(BaseModel):
     question: str
 
-app = FastAPI()
 
 class FeasibilityRequest(BaseModel):
     state: str
@@ -66,6 +73,24 @@ class FeasibilityRequest(BaseModel):
     margin_capital: float | None = None
     experience_level: str = "intermediate"
     location_id: int | None = None
+
+
+def get_competitor_mapping(location_id: int | None, business_category: str | None) -> dict | None:
+    if location_id is None or business_category is None:
+        return None
+    try:
+        rows = get_stored_competitors(location_id, business_category)
+        if not rows:
+            # nothing cached yet -> fetch live from OSM
+            refresh_competitors(location_id, business_category)
+            rows = get_stored_competitors(location_id, business_category)
+        return {
+            "competitor_count": len(rows),
+            "nearest": rows[:5],  # top 5 closest, keep payload light
+        }
+    except (ValueError, RuntimeError):
+        # bad location_id or OSM down -- don't break the whole feasibility report over this
+        return None
 
 
 @app.post("/feasibility")
@@ -108,8 +133,9 @@ def get_feasibility(req: FeasibilityRequest):
         "loan": loan,
         "installment": installment,
         "repayment_schedule": schedule,
-        "competitor_mapping": competitor_mapping, 
+        "competitor_mapping": competitor_mapping,
     }
+
 
 @app.post("/chat")
 def chat(req: ChatRequest):
@@ -118,9 +144,15 @@ def chat(req: ChatRequest):
     except (json.JSONDecodeError, KeyError, IndexError) as e:
         raise HTTPException(status_code=502, detail="Could not understand the message right now. Please try rephrasing.")
 
+    resolved_location_id = req.location_id or resolve_location_id(
+        village_name=extracted.get("village_name"),
+        block=extracted.get("block"),
+        district=extracted.get("district"),
+    )
+
     # If project_cost wasn't stated but margin_capital was, derive it
     if extracted.get("project_cost") is None and extracted.get("margin_capital") is not None:
-        margin_pct = 0.10
+        margin_pct = 0.10  # or read from a default/config
         extracted["project_cost"] = extracted["margin_capital"] / margin_pct
 
     if extracted.get("project_cost") is None:
@@ -155,17 +187,18 @@ def chat(req: ChatRequest):
         experience_level=req.experience_level
     )
     swot = generate_swot(
-    business_category=extracted.get("business_category"),
-    project_cost=extracted["project_cost"],
-    loan_amount=loan["loan_amount"],
-    location={
-    "village_name": extracted.get("village_name"),
-    "block": extracted.get("block"),
-    "district": extracted.get("district"),
-    "state": extracted.get("state"),
-},
-    experience_level=req.experience_level,
-)
+        business_category=extracted.get("business_category"),
+        project_cost=extracted["project_cost"],
+        loan_amount=loan["loan_amount"],
+        location={
+            "village_name": extracted.get("village_name"),
+            "block": extracted.get("block"),
+            "district": extracted.get("district"),
+            "state": extracted.get("state"),
+        },
+        experience_level=req.experience_level,
+        competitor_mapping=competitor_mapping,
+    )
 
     return {
         "explanation": explanation,
@@ -175,24 +208,29 @@ def chat(req: ChatRequest):
         "installment": installment,
         "retrieved_chunks": retrieved,
         "swot": swot,
-        "competitor_mapping": competitor_mapping, 
+        "competitor_mapping": competitor_mapping,
     }
+
 
 @app.post("/scenarios/compare")
 def compare_scenarios_endpoint(req: ScenarioComparisonRequest):
     return compare_scenarios(req.base_inputs, req.scenarios)
 
+
 @app.post("/scenarios/sensitivity")
 def sensitivity_endpoint(req: SensitivityRequest):
     return run_sensitivity_analysis(req.base_inputs, req.vary_field, req.values)
+
 
 @app.post("/journal/entry")
 def create_journal_entry(req: JournalEntryRequest):
     return add_journal_entry(**req.model_dump())
 
+
 @app.get("/journal/entries")
 def list_journal_entries(start_date: str = None, end_date: str = None):
     return get_entries(start_date, end_date)
+
 
 @app.post("/journal/ask")
 def ask_journal(req: JournalQuestionRequest):
