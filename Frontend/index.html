@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
  
 <header class="site-header">
@@ -28,6 +29,11 @@
       <option value="te">తెలుగు (Telugu)</option>
       <option value="ta">தமிழ் (Tamil)</option>
     </select>
+
+    <!-- Add inside .header-row, next to #langSelect -->
+<div class="auth-header-actions">
+  <button id="openAuthModalBtn" class="btn btn-secondary hover-lift" style="padding: 8px 16px; font-size: 14px;">Sign Up / Login</button>
+</div>
   </div>
 </header>
  
@@ -184,5 +190,33 @@
 </footer>
 
 <script src="script.js"></script>
+
+<!-- AUTHENTICATION MODAL -->
+<div id="authModal" class="auth-modal-overlay hidden">
+  <div class="auth-modal-content">
+    <button id="closeAuthModalBtn" class="close-chat-btn" style="color: var(--text-main); float: right; font-size: 20px; cursor: pointer;">✖</button>
+    <div class="auth-tabs">
+      <button class="tab-btn active" data-tab="login">Login</button>
+      <button class="tab-btn" data-tab="signup">Sign Up</button>
+    </div>
+    
+    <!-- Login Form -->
+    <form id="loginForm" class="auth-form">
+      <h3 style="margin-top:0;">Welcome Back</h3>
+      <input type="email" class="form-input" placeholder="Email Address" required>
+      <input type="password" class="form-input" placeholder="Password" required>
+      <button type="submit" class="btn btn-primary btn-block hover-lift" style="margin-top: 15px;">Login</button>
+    </form>
+
+    <!-- Sign Up Form -->
+    <form id="signupForm" class="auth-form hidden">
+      <h3 style="margin-top:0;">Create an Account</h3>
+      <input type="text" class="form-input" placeholder="Full Name" required>
+      <input type="email" class="form-input" placeholder="Email Address" required>
+      <input type="password" class="form-input" placeholder="Create Password" required>
+      <button type="submit" class="btn btn-primary btn-block hover-lift" style="margin-top: 15px;">Sign Up</button>
+    </form>
+  </div>
+</div>
 </body>
 </html>

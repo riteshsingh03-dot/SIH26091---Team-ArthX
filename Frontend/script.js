@@ -95,6 +95,45 @@ function setupUI() {
       chatToggleBtn.style.display = "flex";
     });
   }
+  // --- AUTH MODAL LOGIC ---
+  const authModal = document.getElementById("authModal");
+  const openAuthBtn = document.getElementById("openAuthModalBtn");
+  const closeAuthBtn = document.getElementById("closeAuthModalBtn");
+  const tabBtns = document.querySelectorAll(".tab-btn");
+  const loginForm = document.getElementById("loginForm");
+  const signupForm = document.getElementById("signupForm");
+
+  if (openAuthBtn && authModal) {
+    openAuthBtn.addEventListener("click", () => authModal.classList.remove("hidden"));
+    closeAuthBtn.addEventListener("click", () => authModal.classList.add("hidden"));
+    
+    tabBtns.forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        tabBtns.forEach(b => b.classList.remove("active"));
+        e.target.classList.add("active");
+        const targetTab = e.target.getAttribute("data-tab");
+        if (targetTab === "login") {
+          loginForm.classList.remove("hidden");
+          signupForm.classList.add("hidden");
+        } else {
+          signupForm.classList.remove("hidden");
+          loginForm.classList.add("hidden");
+        }
+      });
+    });
+
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      alert("Logged in successfully!");
+      authModal.classList.add("hidden");
+    });
+
+    signupForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      alert("Account created successfully!");
+      authModal.classList.add("hidden");
+    });
+  }
 }
 
 function setupVoice() {
