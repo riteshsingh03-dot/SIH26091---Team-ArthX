@@ -126,6 +126,7 @@ h2 { font-size: 24px; }
 .doc-checklist input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer; }
 .doc-checklist input[type="checkbox"]:checked + span { text-decoration: line-through; color: var(--text-light); }
 .site-footer p { margin: 0; }
+
 /* Forms & Buttons */
 .step-card { background: #fff; padding: 20px; border-radius: var(--radius); margin-bottom: 15px; border: 1px solid var(--line); }
 .step-label { font-weight: 600; margin-top: 0; }
@@ -157,3 +158,15 @@ h2 { font-size: 24px; }
 
 @keyframes spin { 100% { transform: rotate(360deg); } }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+/* ---------- Personal & Location Details Grid (Added) ---------- */
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+@media (max-width: 600px) {
+  .input-grid {
+    grid-template-columns: 1fr;
+  }
+}

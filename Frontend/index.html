@@ -52,27 +52,24 @@
     </div>
   </section>
  
-  <!-- AI CHAT MODULE -->
-  <section class="chat-section" id="chat">
-    <div class="wrap">
-      <h2 data-i18n="chatTitle">Talk to our AI Assistant</h2>
-      <div class="chat-container">
-        <div id="chatHistory" class="chat-history">
-          <div class="chat-bubble ai" data-i18n="chatGreeting">Hello! Tell me about your business idea and how much money you have to start.</div>
-        </div>
-        <div class="chat-input-area">
-          <button id="voiceBtn" class="voice-btn" title="Click to speak">🎤</button>
-          <input type="text" id="chatInput" placeholder="Type or speak here...">
-          <button class="btn btn-primary" id="chatBtn" data-i18n="sendBtn">Send</button>
-        </div>
-      </div>
-    </div>
-  </section>
- 
   <!-- MANUAL WIZARD -->
   <section class="wizard-section" id="wizard">
     <div class="wrap">
       <h2 data-i18n="wizardTitle">Or enter details manually</h2>
+      
+      <!-- NEW: Personal & Location Details Section -->
+      <div class="step-card">
+        <p class="step-label">Personal & Location Details</p>
+        <div class="input-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+          <input type="text" id="userNameInput" class="form-input" placeholder="Full Name">
+          <input type="text" id="userPhoneInput" class="form-input" placeholder="Phone Number">
+          <input type="text" id="stateInput" class="form-input" placeholder="State (e.g. Uttar Pradesh)">
+          <input type="text" id="districtInput" class="form-input" placeholder="District">
+          <input type="text" id="blockInput" class="form-input" placeholder="Block / Tehsil">
+          <input type="text" id="villageInput" class="form-input" placeholder="Village / City Name">
+        </div>
+      </div>
+
       <div class="step-card">
         <p class="step-label" data-i18n="q1">1. Area Type</p>
         <div class="toggle-row">
@@ -144,7 +141,7 @@
             <label><input type="checkbox"> <span>Passport Size Photographs (2)</span></label>
           </li>
           <li>
-            <label><input type="checkbox"> <span>Identity Proof (Aadhaar, Voter ID, or PAN)</span></label>
+            <label><input type="checkbox"> <span>Identity Proof (Voter ID, or PAN)</span></label>
           </li>
           <li>
             <label><input type="checkbox"> <span>Address Proof (Electricity Bill or Ration Card)</span></label>
@@ -159,6 +156,26 @@
       </div>
     </div>
   </section>
+
+<!-- FLOATING AI CHAT WIDGET -->
+<button id="chatToggleBtn" class="chat-toggle-btn" aria-label="Open AI Assistant" title="Open AI Assistant">💬</button>
+
+<div id="floatingChatWidget" class="floating-chat-widget hidden">
+  <div class="chat-widget-header">
+    <h3 data-i18n="chatTitle">Talk to our AI Assistant</h3>
+    <button id="closeChatBtn" class="close-chat-btn" aria-label="Close Chat" title="Close Chat">✖</button>
+  </div>
+  <div class="chat-container">
+    <div id="chatHistory" class="chat-history">
+      <div class="chat-bubble ai" data-i18n="chatGreeting">Hello! Tell me about your business idea and how much money you have to start.</div>
+    </div>
+    <div class="chat-input-area">
+      <button id="voiceBtn" class="voice-btn" title="Click to speak">🎤</button>
+      <input type="text" id="chatInput" placeholder="Type or speak here...">
+      <button class="btn btn-primary" id="chatBtn" data-i18n="sendBtn">Send</button>
+    </div>
+  </div>
+</div>
 
 <footer class="site-footer">
   <div class="wrap">
