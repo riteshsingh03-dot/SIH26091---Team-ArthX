@@ -75,6 +75,10 @@ function setupUI() {
   const askBtn = document.getElementById("askJournalBtn");
   if(askBtn) askBtn.addEventListener("click", askJournal);
 
+  // --- NEW: Journal Table Loader Listener ---
+  const loadEntriesBtn = document.getElementById("loadEntriesBtn");
+  if(loadEntriesBtn) loadEntriesBtn.addEventListener("click", fetchJournalEntries);
+
   // Set today's date automatically in the journal form
   const dateEl = document.getElementById("journalDate");
   if(dateEl) dateEl.valueAsDate = new Date();
@@ -95,6 +99,149 @@ function setupUI() {
       chatToggleBtn.style.display = "flex";
     });
   }
+ // --- AUTH MODAL & STATE LOGIC ---
+  const authModal = document.getElementById("authModal");
+  const openAuthBtn = document.getElementById("openAuthModalBtn");
+  const closeAuthBtn = document.getElementById("closeAuthModalBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const tabBtns = document.querySelectorAll(".tab-btn");
+  const loginForm = document.getElementById("loginForm");
+  const signupForm = document.getElementById("signupForm");
+
+  if (openAuthBtn && authModal) {
+    openAuthBtn.addEventListener("click", () => authModal.classList.remove("hidden"));
+    closeAuthBtn.addEventListener("click", () => authModal.classList.add("hidden"));
+    
+    tabBtns.forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        tabBtns.forEach(b => b.classList.remove("active"));
+        e.target.classList.add("active");
+        const targetTab = e.target.getAttribute("data-tab");
+        if (targetTab === "login") {
+          loginForm.classList.remove("hidden");
+          signupForm.classList.add("hidden");
+        } else {
+          signupForm.classList.remove("hidden");
+          loginForm.classList.add("hidden");
+        }
+      });
+    });
+
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      authModal.classList.add("hidden");
+      if(openAuthBtn) openAuthBtn.classList.add("hidden");
+      if(logoutBtn) logoutBtn.classList.remove("hidden");
+      alert("Logged in successfully!");
+    });
+
+    signupForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      authModal.classList.add("hidden");
+      if(openAuthBtn) openAuthBtn.classList.add("hidden");
+      if(logoutBtn) logoutBtn.classList.remove("hidden");
+      alert("Account created successfully!");
+    });
+
+    if(logoutBtn) {
+      logoutBtn.addEventListener("click", () => {
+        logoutBtn.classList.add("hidden");
+        if(openAuthBtn) openAuthBtn.classList.remove("hidden");
+        alert("Logged out successfully!");
+      });
+    }
+  }
+  // --- SIMULATION MODAL & ENGINE LOGIC ---
+  const openSimBtn = document.getElementById("openSimModalBtn");
+  const simModal = document.getElementById("simModalOverlay");
+  const closeSimBtn = document.getElementById("closeSimModalBtn");
+  const runSimBtn = document.getElementById("runSimBtn");
+
+  if (openSimBtn && simModal) {
+    openSimBtn.addEventListener("click", () => simModal.classList.remove("hidden"));
+    closeSimBtn.addEventListener("click", () => simModal.classList.add("hidden"));
+  }
+
+  if (runSimBtn) {
+    runSimBtn.addEventListener("click", async () => {
+      const payload = {
+        initial_cash: parseFloat(document.getElementById("simInitialCash").value) || 0,
+        base_monthly_revenue: parseFloat(document.getElementById("simMonthlyRev").value) || 0,
+        base_monthly_expenses: parseFloat(document.getElementById("simMonthlyExp").value) || 0,
+        emi: parseFloat(document.getElementById("simEmi").value) || 0,
+        iterations: 1000
+      };
+
+      const resultBox = document.getElementById("simulationResult");
+      resultBox.style.display = "block";
+      resultBox.innerHTML = "<em>Simulating 1,000 market conditions...</em>";
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/simulate/survival`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+
+        let badgeColor = data.survival_probability_pct > 80 ? '#10B981' : (data.survival_probability_pct > 50 ? '#F59E0B' : '#EF4444');
+
+        resultBox.innerHTML = `
+          <h4 style="margin: 0 0 8px 0; color: #1E293B;">Simulation Results</h4>
+          <p style="margin: 4px 0;">Survival Probability: <strong style="color: ${badgeColor}; font-size: 16px;">${data.survival_probability_pct}%</strong></p>
+          <p style="margin: 4px 0;">Risk Level: <strong>${data.risk_level}</strong></p>
+          <p style="font-size: 12px; color: var(--text-light); margin-top: 6px;">Tested across ${data.simulated_iterations} randomized seasonal demand cycles.</p>
+        `;
+      } catch (e) {
+        resultBox.innerHTML = `<span style="color:red">Simulation engine failed to connect. Ensure backend is running.</span>`;
+      }
+    });
+  }
+
+  // --- SCENARIO COMPARISON & SENSITIVITY LOGIC ---
+  const compareBtn = document.getElementById("compareScenariosBtn");
+  if (compareBtn) {
+    compareBtn.addEventListener("click", async () => {
+      const resultBox = document.getElementById("scenarioResultBox");
+      resultBox.style.display = "block";
+      resultBox.innerHTML = "<em>Running scenario matrix...</em>";
+
+      const payload = {
+        base_inputs: {
+          project_cost: 1000000,
+          margin_pct: 0.10,
+          annual_rate_pct: 8.0,
+          tenure_months: 84,
+          fixed_costs: 50000,
+          price_per_unit: 100,
+          variable_cost_per_unit: 60
+        },
+        scenarios: {
+          scenario_a: { price_per_unit: 100 },
+          scenario_b: { price_per_unit: 120 }
+        }
+      };
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/scenarios/compare`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+
+        resultBox.innerHTML = `
+          <h4 style="margin: 0 0 8px 0;">Comparison Results (Breakeven Analysis)</h4>
+          <p style="margin: 4px 0;">Base Scenario (₹100/unit): <strong>${data.scenario_a?.breakeven_units || 'N/A'} units</strong></p>
+          <p style="margin: 4px 0;">Optimized Scenario (₹120/unit): <strong style="color: #10B981;">${data.scenario_b?.breakeven_units || 'N/A'} units</strong> (Lower breakeven point due to higher margin per unit).</p>
+        `;
+      } catch (e) {
+        resultBox.innerHTML = `<span style="color:red">Failed to fetch scenario comparison from backend.</span>`;
+      }
+    });
+  }
+
+  
 }
 
 function setupVoice() {
@@ -304,7 +451,8 @@ async function submitJournalEntry() {
       document.getElementById("journalSales").value = "";
       document.getElementById("journalExpenses").value = "";
       document.getElementById("journalUnits").value = "";
-    }
+      fetchJournalEntries();
+     }
   } catch (e) {
     alert("Failed to save entry.");
   }
@@ -344,6 +492,34 @@ async function askJournal() {
   }
 }
 
+async function fetchJournalEntries() {
+  const tbody = document.getElementById("journalTableBody");
+  if (!tbody) return;
+
+  tbody.innerHTML = `<tr><td colspan="4" style="padding: 12px; text-align: center;">Loading entries...</td></tr>`;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/journal/entries`);
+    const entries = await response.json();
+
+    if (!entries || entries.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="padding: 12px; text-align: center; color: var(--text-light);">No journal entries found. Log one above!</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = entries.map(entry => `
+      <tr style="border-bottom: 1px solid var(--line);">
+        <td style="padding: 8px;">${entry.entry_date}</td>
+        <td style="padding: 8px; color: #10B981;">₹${entry.sales_revenue || 0}</td>
+        <td style="padding: 8px; color: #EF4444;">₹${entry.expenses || 0}</td>
+        <td style="padding: 8px;">${entry.units_sold || '-'}</td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="4" style="padding: 12px; text-align: center; color: red;">Failed to load journal records.</td></tr>`;
+  }
+}
+
 // --- NEW: READ ALOUD LOGIC ---
 function readReportAloud() {
   const content = document.getElementById("resultContent").innerText;
@@ -359,3 +535,69 @@ function readReportAloud() {
   
   window.speechSynthesis.speak(utterance);
 }
+// --- MAP RENDERER FOR COMPETITORS ---
+let competitorMap = null;
+
+function renderCompetitorMap(competitors) {
+  const mapContainerId = "competitorMapDiv";
+  let mapDiv = document.getElementById(mapContainerId);
+  
+  // Create container if it doesn't exist in the report DOM
+  if (!mapDiv) {
+    return; // Ensure the HTML element exists or is appended in renderReport
+  }
+
+  // Clean up previous map instance if re-rendering
+  if (competitorMap) {
+    competitorMap.remove();
+  }
+
+  // Default center (e.g., central coordinates or fallback)
+  const defaultLat = 20.5937; 
+  const defaultLon = 78.9629;
+
+  competitorMap = L.map(mapContainerId).setView([defaultLat, defaultLon], 13);
+
+  // Load OpenStreetMap tiles
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(competitorMap);
+
+  // Add markers if coordinates are provided by backend, or plot them relative to center
+  if (competitors && competitors.length > 0) {
+    const bounds = [];
+    competitors.forEach((comp, index) => {
+      // Fallback or explicit lat/lon from OSM payload
+      const lat = comp.lat || (defaultLat + (index * 0.01));
+      const lon = comp.lon || (defaultLon + (index * 0.01));
+      
+      const marker = L.marker([lat, lon]).addTo(competitorMap);
+      marker.bindPopup(`<b>${comp.name || 'Competitor'}</b><br>${comp.distance_km} km away`);
+      bounds.push([lat, lon]);
+    });
+
+    if (bounds.length > 0) {
+      competitorMap.fitBounds(bounds, { padding: [50, 50] });
+    }
+  }
+}
+
+let competitorHTML = "";
+  if (data.competitor_mapping && data.competitor_mapping.length > 0) {
+      competitorHTML = `
+      <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 20px 0;">
+      <h3 style="margin-top:0">Nearby Competitors Map (Live OSM)</h3>
+      <div id="competitorMapDiv" style="height: 300px; width: 100%; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--line);"></div>
+      <ul class="competitor-list">
+        ${data.competitor_mapping.slice(0, 5).map(comp => `
+          <li class="competitor-card">
+            <span class="competitor-name">${comp.name || 'Unnamed Business'}</span>
+            <span class="competitor-dist">${comp.distance_km} km away</span>
+          </li>
+        `).join('')}
+      </ul>
+      `;
+      // Trigger map rendering after DOM update
+      setTimeout(() => renderCompetitorMap(data.competitor_mapping), 100);
+  }
