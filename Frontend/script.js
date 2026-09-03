@@ -369,7 +369,7 @@ function renderReport(data) {
   
   const schemeName = data.scheme?.name || "Standard Loan";
   const projectCost = data.loan?.project_cost || 0;
-  const marginMoney = data.loan?.margin_money || 0;
+  const marginMoney = data.loan?.margin_amount || 0;
   const loanAmount = data.loan?.loan_amount || 0;
   const emi = data.installment || 0;
   
