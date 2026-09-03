@@ -18,6 +18,8 @@ from engines.financial.sensitivity import compare_scenarios, run_sensitivity_ana
 from engines.journal.entries import add_journal_entry, get_entries
 from engines.journal.query import answer_journal_question
 
+from google.genai.errors import ServerError
+
 from engines.market.competitor_service import (
     refresh_competitors,
     get_stored_competitors,
@@ -141,8 +143,10 @@ def get_feasibility(req: FeasibilityRequest):
 def chat(req: ChatRequest):
     try:
         extracted = extract_user_intent(req.message)
-    except (json.JSONDecodeError, KeyError, IndexError) as e:
+    except (json.JSONDecodeError, KeyError, IndexError):
         raise HTTPException(status_code=502, detail="Could not understand the message right now. Please try rephrasing.")
+    except ServerError:
+        raise HTTPException(status_code=503, detail="AI service is temporarily busy. Please try again in a moment.")
 
     resolved_location_id = req.location_id or resolve_location_id(
         village_name=extracted.get("village_name"),
