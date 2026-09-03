@@ -65,21 +65,150 @@ h2 { font-size: 24px; }
 .chat-toggle-btn { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: var(--primary); color: white; font-size: 24px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 1000; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
 .chat-toggle-btn:hover { transform: scale(1.05); background: var(--primary-hover); }
 
-.floating-chat-widget { position: fixed; bottom: 20px; right: 20px; width: 380px; max-width: 90vw; background: #fff; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); border: 1px solid var(--line); z-index: 1001; display: flex; flex-direction: column; overflow: hidden; transition: opacity 0.3s ease, transform 0.3s ease; }
-.floating-chat-widget.hidden { opacity: 0; pointer-events: none; transform: translateY(20px); }
-.chat-widget-header { background: var(--primary); color: #fff; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-.chat-widget-header h3 { margin: 0; font-size: 16px; color: #fff; }
-.close-chat-btn { background: transparent; border: none; color: #fff; font-size: 16px; cursor: pointer; font-weight: bold; }
+/* ---------- Full-Screen AI Chat Widget ---------- */
+/* ---------- Full-Screen Modal Chat Widget with Gaps ---------- */
+.floating-chat-widget {
+  position: fixed;
+  inset: 20px; /* Creates a clean gap from all sides (top, right, bottom, left) */
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--line);
+  z-index: 2500;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
 
-.floating-chat-widget .chat-container { border: none; border-radius: 0; }
-.floating-chat-widget .chat-history { height: 300px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; background: #FAFAFA; }
-.chat-bubble { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 14px; }
-.chat-bubble.ai { background: #fff; border: 1px solid var(--line); align-self: flex-start; border-bottom-left-radius: 2px; }
-.chat-bubble.user { background: var(--primary); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
-.floating-chat-widget .chat-input-area { display: flex; gap: 8px; padding: 10px; background: #fff; border-top: 1px solid var(--line); align-items: center; }
-.floating-chat-widget .chat-input-area input { flex: 1; padding: 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; }
-.voice-btn { background: #FEE2E2; border: none; border-radius: 50%; width: 38px; height: 38px; font-size: 16px; cursor: pointer; transition: 0.2s;}
-.voice-btn.listening { background: #EF4444; color: #fff; animation: pulse 1s infinite; }
+.floating-chat-widget.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.98);
+}
+
+.chat-widget-header {
+  background: var(--primary);
+  color: #fff;
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-widget-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #fff;
+}
+
+.close-chat-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.floating-chat-widget .chat-container { 
+  border: none; 
+  border-radius: 0; 
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: calc(100% - 65px); /* Fills the full length of the container portion */
+}
+
+.floating-chat-widget .chat-history { 
+  height: auto !important; 
+  flex: 1;
+  border-radius: 0; 
+  padding: 24px;
+}
+
+.floating-chat-widget .chat-history {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background: var(--bg);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.chat-bubble {
+  max-width: 75%;
+  padding: 14px 18px;
+  border-radius: 16px;
+  font-size: 15px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* AI Message: Left-aligned, white background, subtle border */
+.chat-bubble.ai {
+  background: #ffffff;
+  color: var(--text-main);
+  border: 1px solid var(--line);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+/* User Message: Right-aligned, primary blue background, white text */
+.chat-bubble.user {
+  background: var(--primary);
+  color: #ffffff;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
+}
+
+/* ---------- Full-Length Rounded Chat Input Box ---------- */
+.floating-chat-widget .chat-input-area { 
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 24px; 
+  background: #fff;
+  border-top: 1px solid var(--line);
+}
+
+.floating-chat-widget .chat-input-area input { 
+  flex: 1; /* Stretches the box to take up the full available length */
+  width: 100%;
+  font-size: 16px; 
+  padding: 14px 20px; 
+  border-radius: 30px; /* Smooth pill-shaped border radius */
+  border: 1px solid var(--line);
+  background: var(--bg);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.floating-chat-widget .chat-input-area input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  outline: none;
+}
+
+.floating-chat-widget .btn { 
+  padding: 12px 24px; 
+  font-size: 15px;
+  border-radius: 25px;
+}
+
+.floating-chat-widget .voice-btn { 
+  width: 44px; 
+  height: 44px; 
+  font-size: 18px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
 
 /* Modals (Auth & Simulator) */
 .auth-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 2000; transition: opacity 0.3s ease; }
