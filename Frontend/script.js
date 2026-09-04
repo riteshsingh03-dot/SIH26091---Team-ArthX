@@ -542,33 +542,27 @@ function renderCompetitorMap(competitors) {
   const mapContainerId = "competitorMapDiv";
   let mapDiv = document.getElementById(mapContainerId);
   
-  // Create container if it doesn't exist in the report DOM
   if (!mapDiv) {
-    return; // Ensure the HTML element exists or is appended in renderReport
+    return;
   }
 
-  // Clean up previous map instance if re-rendering
   if (competitorMap) {
     competitorMap.remove();
   }
 
-  // Default center (e.g., central coordinates or fallback)
   const defaultLat = 20.5937; 
   const defaultLon = 78.9629;
 
   competitorMap = L.map(mapContainerId).setView([defaultLat, defaultLon], 13);
 
-  // Load OpenStreetMap tiles
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(competitorMap);
 
-  // Add markers if coordinates are provided by backend, or plot them relative to center
   if (competitors && competitors.length > 0) {
     const bounds = [];
     competitors.forEach((comp, index) => {
-      // Fallback or explicit lat/lon from OSM payload
       const lat = comp.lat || (defaultLat + (index * 0.01));
       const lon = comp.lon || (defaultLon + (index * 0.01));
       
@@ -583,21 +577,32 @@ function renderCompetitorMap(competitors) {
   }
 }
 
-let competitorHTML = "";
-  if (data.competitor_mapping && data.competitor_mapping.length > 0) {
-      competitorHTML = `
-      <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 20px 0;">
-      <h3 style="margin-top:0">Nearby Competitors Map (Live OSM)</h3>
-      <div id="competitorMapDiv" style="height: 300px; width: 100%; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--line);"></div>
-      <ul class="competitor-list">
-        ${data.competitor_mapping.slice(0, 5).map(comp => `
-          <li class="competitor-card">
-            <span class="competitor-name">${comp.name || 'Unnamed Business'}</span>
-            <span class="competitor-dist">${comp.distance_km} km away</span>
-          </li>
-        `).join('')}
-      </ul>
-      `;
-      // Trigger map rendering after DOM update
-      setTimeout(() => renderCompetitorMap(data.competitor_mapping), 100);
+// ==========================================
+// --- BOTTOM NAV (additive UI only — no backend wiring touched) ---
+// ==========================================
+
+if (i18n.en) Object.assign(i18n.en, { navHome: "Home", navJournal: "Journal", navTools: "Tools", navChat: "Chat" });
+if (i18n.hi) Object.assign(i18n.hi, { navHome: "होम", navJournal: "जर्नल", navTools: "टूल्स", navChat: "चैट" });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const navItems = document.querySelectorAll(".nav-item[data-view]");
+  const views = document.querySelectorAll(".app-view");
+
+  navItems.forEach(item => {
+    item.addEventListener("click", () => {
+      navItems.forEach(n => n.classList.remove("active"));
+      item.classList.add("active");
+
+      const target = item.getAttribute("data-view");
+      views.forEach(v => v.classList.toggle("active-view", v.id === `view-${target}`));
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  });
+
+  const chatNavBtn = document.getElementById("navChatBtn");
+  const chatToggleBtn = document.getElementById("chatToggleBtn");
+  if (chatNavBtn && chatToggleBtn) {
+    chatNavBtn.addEventListener("click", () => chatToggleBtn.click());
   }
+});

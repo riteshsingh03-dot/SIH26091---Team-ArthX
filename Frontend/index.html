@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ArthSaarthak — AI Business Assistant</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
- 
+
 <header class="site-header">
   <div class="wrap header-row">
     <div class="brand">
@@ -30,176 +30,233 @@
         <option value="te">తెలుగు (Telugu)</option>
         <option value="ta">தமிழ் (Tamil)</option>
       </select>
-      <button id="openAuthModalBtn" class="btn btn-secondary hover-lift" style="padding: 8px 16px; font-size: 14px;">Sign Up / Login</button>
-      <button id="logoutBtn" class="btn btn-secondary hover-lift hidden" style="padding: 8px 16px; font-size: 14px;">Logout</button>
+      <button id="openAuthModalBtn" class="btn btn-secondary btn-sm">Sign Up / Login</button>
+      <button id="logoutBtn" class="btn btn-secondary btn-sm hidden">Logout</button>
     </div>
   </div>
 </header>
- 
-<main class="wrap" style="padding-top: 20px; padding-bottom: 50px;">
-  <!-- HERO -->
-  <section class="hero unified-card" style="text-align: center; padding: 30px; margin-bottom: 25px;">
-    <h1 data-i18n="heroTitle" style="font-size: 28px; margin-bottom: 10px;">Turn your savings into a funded business plan.</h1>
-    <p class="hero-sub" data-i18n="heroSub" style="font-size: 16px; color: var(--text-light);">Tell us your location and available cash. We calculate your total budget, map local competitors, and match you with government schemes.</p>
-  </section>
 
-  <!-- HOW IT WORKS FLOWCHART -->
-  <section class="flowchart-section unified-card" style="padding: 20px; margin-bottom: 25px; text-align: center;">
-    <h3 data-i18n="flowTitle" style="margin-top:0;">How ArthSaarthak Works</h3>
-    <div class="flow-steps">
-      <div class="step"><span>1</span> <p data-i18n="flow1">Input Details & Margin Capital</p></div>
-      <div class="step-arrow">→</div>
-      <div class="step"><span>2</span> <p data-i18n="flow2">AI Analyzes Market & Calculates Loan (90%)</p></div>
-      <div class="step-arrow">→</div>
-      <div class="step"><span>3</span> <p data-i18n="flow3">Get Scheme Match & EMI Plan</p></div>
-    </div>
-  </section>
- 
-  <!-- UNIFIED WIZARD & PROFILE SECTION -->
-  <section class="wizard-section unified-card" style="padding: 25px; margin-bottom: 25px;">
-    <h2 data-i18n="wizardTitle" style="margin-top:0; border-bottom: 1px solid var(--line); padding-bottom: 12px;">Business & Location Setup</h2>
-    
-    <div class="step-card">
-      <p class="step-label">1. Personal & Contact Details</p>
-      <div class="input-grid">
-        <input type="text" id="userNameInput" class="form-input" placeholder="Full Name">
-        <input type="text" id="userPhoneInput" class="form-input" placeholder="Phone Number">
+<main class="wrap app-main">
+
+  <!-- ============ HOME VIEW ============ -->
+  <section class="app-view active-view" id="view-home">
+
+    <section class="hero unified-card">
+      <p class="eyebrow">For village and small-town entrepreneurs</p>
+      <h1 data-i18n="heroTitle">Turn your savings into a funded business plan.</h1>
+      <p class="hero-sub" data-i18n="heroSub">Tell us your location and available cash. We calculate your total budget, map local competitors, and match you with government schemes.</p>
+    </section>
+
+    <section class="flowchart-section unified-card">
+      <h3 data-i18n="flowTitle">How ArthSaarthak Works</h3>
+      <div class="flow-steps">
+        <div class="step"><span>1</span><p data-i18n="flow1">Input Details & Margin Capital</p></div>
+        <div class="step-arrow">→</div>
+        <div class="step"><span>2</span><p data-i18n="flow2">AI Analyzes Market & Calculates Loan (90%)</p></div>
+        <div class="step-arrow">→</div>
+        <div class="step"><span>3</span><p data-i18n="flow3">Get Scheme Match & EMI Plan</p></div>
       </div>
-    </div>
+    </section>
 
-    <div class="step-card">
-      <p class="step-label">2. Granular Location & Area Type</p>
-      <div class="toggle-row" style="margin-bottom: 12px;">
-        <button type="button" class="pill-btn" data-area="rural" aria-pressed="true" data-i18n="ruralBtn">Village / Gram Panchayat</button>
-        <button type="button" class="pill-btn" data-area="urban" aria-pressed="false" data-i18n="urbanBtn">Town / City</button>
-      </div>
-      <div class="input-grid" style="grid-template-columns: repeat(2, 1fr);">
-        <input type="text" id="stateInput" class="form-input" placeholder="State (e.g. Uttar Pradesh)">
-        <input type="text" id="districtInput" class="form-input" placeholder="District">
-        <input type="text" id="blockInput" class="form-input" placeholder="Block / Tehsil">
-        <input type="text" id="villageInput" class="form-input" placeholder="Village / City Name">
-      </div>
-    </div>
+    <section class="wizard-section unified-card">
+      <h2 data-i18n="wizardTitle">Business & Location Setup</h2>
 
-    <div class="step-card">
-      <p class="step-label" data-i18n="q2">3. Business Category</p>
-      <select id="categorySelect" class="form-select">
-        <option value="dairy" data-i18n="catDairy">Dairy Farming</option>
-        <option value="tailoring" data-i18n="catTailor">Tailoring</option>
-        <option value="grocery" data-i18n="catGrocery">Grocery Store</option>
-      </select>
-    </div>
-
-    <div class="step-card">
-      <p class="step-label" data-i18n="q3">4. Your Margin Capital (₹)</p>
-      <input type="number" id="marginInput" class="form-input" placeholder="e.g. 50000">
-    </div>
-
-    <button class="btn btn-primary btn-large btn-block hover-lift" id="calcBtn" data-i18n="calcBtn" style="margin-top: 10px;">Generate AI Report</button>
-  </section>
- 
-  <!-- REPORT RESULT SECTION -->
-  <section class="result-section" id="resultSection" hidden style="margin-bottom: 25px;">
-    <div class="unified-card" style="padding: 25px;">
-      <div class="result-header">
-        <h2 data-i18n="reportTitle" style="margin:0;">Your Business & Financial Report</h2>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <button id="readAloudBtn" class="btn btn-secondary hover-lift" title="Read Aloud">🔊 Listen</button>
-          <button id="downloadBtn" class="btn btn-secondary hover-lift" data-i18n="downloadBtn">📄 Download / Print</button>
+      <div class="step-card">
+        <p class="step-label">1. Personal & Contact Details</p>
+        <div class="input-grid">
+          <input type="text" id="userNameInput" class="form-input" placeholder="Full Name">
+          <input type="text" id="userPhoneInput" class="form-input" placeholder="Phone Number">
         </div>
       </div>
-      <div id="loadingIndicator" class="spinner" hidden></div>
-      <div id="resultContent"></div>
-    </div>
+
+      <div class="step-card">
+        <p class="step-label">2. Granular Location & Area Type</p>
+        <div class="toggle-row">
+          <button type="button" class="pill-btn" data-area="rural" aria-pressed="true" data-i18n="ruralBtn">Village / Gram Panchayat</button>
+          <button type="button" class="pill-btn" data-area="urban" aria-pressed="false" data-i18n="urbanBtn">Town / City</button>
+        </div>
+        <div class="input-grid input-grid-4">
+          <input type="text" id="stateInput" class="form-input" placeholder="State (e.g. Uttar Pradesh)">
+          <input type="text" id="districtInput" class="form-input" placeholder="District">
+          <input type="text" id="blockInput" class="form-input" placeholder="Block / Tehsil">
+          <input type="text" id="villageInput" class="form-input" placeholder="Village / City Name">
+        </div>
+      </div>
+
+      <div class="step-card">
+        <p class="step-label" data-i18n="q2">3. Business Category</p>
+        <select id="categorySelect" class="form-select">
+          <option value="dairy" data-i18n="catDairy">Dairy Farming</option>
+          <option value="tailoring" data-i18n="catTailor">Tailoring</option>
+          <option value="grocery" data-i18n="catGrocery">Grocery Store</option>
+        </select>
+      </div>
+
+      <div class="step-card">
+        <p class="step-label" data-i18n="q3">4. Your Margin Capital (₹)</p>
+        <input type="number" id="marginInput" class="form-input" placeholder="e.g. 50000">
+      </div>
+
+      <button class="btn btn-primary btn-large btn-block" id="calcBtn" data-i18n="calcBtn">Generate AI Report</button>
+    </section>
+
+    <section class="result-section" id="resultSection" hidden>
+      <div class="unified-card result-card">
+        <div class="result-header">
+          <h2 data-i18n="reportTitle">Your Business & Financial Report</h2>
+          <div class="result-actions">
+            <button id="readAloudBtn" class="btn btn-secondary btn-sm" title="Read Aloud">🔊 Listen</button>
+            <button id="downloadBtn" class="btn btn-secondary btn-sm" data-i18n="downloadBtn">📄 Download / Print</button>
+          </div>
+        </div>
+        <div id="loadingIndicator" class="spinner" hidden></div>
+        <div id="resultContent"></div>
+      </div>
+    </section>
+
+    <section class="documents-section unified-card">
+      <h3 data-i18n="docsTitle">Required Documents Checklist</h3>
+      <p class="field-hint">Keep these ready before visiting the local bank or Common Service Center (CSC).</p>
+      <ul class="doc-checklist">
+        <li><label><input type="checkbox"> <span>Passport Size Photographs (2)</span></label></li>
+        <li><label><input type="checkbox"> <span>Identity Proof (Aadhaar/Voter ID/PAN)</span></label></li>
+        <li><label><input type="checkbox"> <span>Address Proof (Electricity Bill/Ration Card)</span></label></li>
+        <li><label><input type="checkbox"> <span>Quotation of Machinery / Equipment</span></label></li>
+        <li><label><input type="checkbox"> <span>Project Report (ArthSaarthak AI Report)</span></label></li>
+      </ul>
+    </section>
+
   </section>
 
-  <!-- USP TOOLS: SURVIVAL SIMULATOR & SCENARIO PLANNER -->
-  <section class="usp-tools-section" style="margin-bottom: 25px; display: flex; gap: 15px; flex-wrap: wrap;">
-    <div class="unified-card" style="flex: 1; min-width: 280px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+  <!-- ============ JOURNAL VIEW ============ -->
+  <section class="app-view" id="view-journal">
+    <section class="journal-section unified-card" id="journalSection">
+      <h2>Business Journal & Tracking</h2>
+      <p class="hero-sub small">Log your daily sales and ask your ledger a question, anytime.</p>
+
+      <div class="journal-grid">
+        <div class="step-card accent-green">
+          <h3>Log Daily Entry</h3>
+          <input type="date" id="journalDate" class="form-input">
+          <input type="number" id="journalSales" class="form-input" placeholder="Sales Revenue (₹)">
+          <input type="number" id="journalExpenses" class="form-input" placeholder="Expenses (₹)">
+          <input type="number" id="journalUnits" class="form-input" placeholder="Units Sold (Optional)">
+          <button class="btn btn-primary btn-block" id="logJournalBtn">Save Entry</button>
+          <p id="journalLogStatus" class="save-status">Saved successfully!</p>
+        </div>
+
+        <div class="step-card accent-blue muted-card">
+          <h3>Ask Your Ledger</h3>
+          <p class="field-hint">e.g. "What was my highest sales day?" or "Show total expenses."</p>
+          <input type="text" id="journalQuery" class="form-input" placeholder="Ask AI about records...">
+          <button class="btn btn-primary btn-block btn-blue" id="askJournalBtn">Ask Ledger AI</button>
+          <div id="journalAnswer" class="ledger-answer"></div>
+        </div>
+      </div>
+
+      <div class="step-card ledger-table-card">
+        <div class="ledger-table-head">
+          <h3>Recent Ledger Records</h3>
+          <button class="btn btn-secondary btn-sm" id="loadEntriesBtn">Refresh Table</button>
+        </div>
+        <div class="table-scroll">
+          <table id="journalTable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Sales (₹)</th>
+                <th>Expenses (₹)</th>
+                <th>Units Sold</th>
+              </tr>
+            </thead>
+            <tbody id="journalTableBody">
+              <tr><td colspan="4" class="table-empty">Click 'Refresh Table' to load entries.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <!-- ============ FINANCIAL TOOLS VIEW ============ -->
+  <section class="app-view" id="view-tools">
+    <section class="tools-intro unified-card">
+      <h2>Financial Engines</h2>
+      <p class="hero-sub small">Stress-test your business before you borrow a single rupee.</p>
+    </section>
+
+    <section class="usp-tools-section">
+      <div class="unified-card tool-card">
+        <div>
+          <h3 class="tool-title tool-title-green">⚡ AI Survival Simulator</h3>
+          <p class="field-hint">Test your business resilience against market shocks and seasonal demand drops.</p>
+        </div>
+        <button id="openSimModalBtn" class="btn btn-primary btn-green">Open Simulator</button>
+      </div>
+
+      <div class="unified-card tool-card">
+        <div>
+          <h3 class="tool-title">📈 Scenario & Pricing Planner</h3>
+          <p class="field-hint">Compare base plans against optimized pricing models to lower breakeven points.</p>
+        </div>
+        <button class="btn btn-primary" id="compareScenariosBtn">Run Scenario Check</button>
+      </div>
+    </section>
+
+    <div id="scenarioResultBox" class="unified-card scenario-result"></div>
+  </section>
+
+  <!-- FOOTER (visible under every tab) -->
+  <footer class="site-footer">
+    <div class="portal-grid">
       <div>
-        <h3 style="margin-top:0; color: #065F46;">⚡ AI Survival Simulator</h3>
-        <p class="field-hint" style="font-size: 14px; color: var(--text-light);">Test your business resilience against market shocks and seasonal demand drops.</p>
+        <h4>Udyam Registration</h4>
+        <p>Official MSME registration portal.</p>
+        <a href="https://udyamregistration.gov.in" target="_blank">Visit Portal ↗</a>
       </div>
-      <button id="openSimModalBtn" class="btn btn-primary hover-lift" style="background: #10B981; margin-top: 15px;">Open Simulator</button>
-    </div>
-
-    <div class="unified-card" style="flex: 1; min-width: 280px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
       <div>
-        <h3 style="margin-top:0; color: var(--primary);">📈 Scenario & Pricing Planner</h3>
-        <p class="field-hint" style="font-size: 14px; color: var(--text-light);">Compare base plans against optimized pricing models to lower breakeven points.</p>
+        <h4>PMEGP Portal</h4>
+        <p>Credit-linked subsidy schemes.</p>
+        <a href="https://pmegp.msme.gov.in" target="_blank">Visit Portal ↗</a>
       </div>
-      <button class="btn btn-primary hover-lift" id="compareScenariosBtn" style="margin-top: 15px;">Run Scenario Check</button>
-    </div>
-  </section>
-
-  <div id="scenarioResultBox" class="unified-card" style="margin-bottom: 25px; display: none; padding: 20px;"></div>
-
-  <!-- AI BUSINESS JOURNAL & TRACKING -->
-  <section class="journal-section unified-card" style="padding: 25px; margin-bottom: 25px;" id="journalSection">
-    <h2 style="margin-top:0;">AI Business Journal & Tracking</h2>
-    <p class="hero-sub" style="font-size: 15px; margin-bottom: 20px;">Log your daily sales and query your ledger instantly using Gemini AI.</p>
-    
-    <div class="journal-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-      <!-- Log Entry Form -->
-      <div class="step-card" style="margin-bottom:0;">
-        <h3 style="margin-top:0;">Log Daily Entry</h3>
-        <input type="date" id="journalDate" class="form-input">
-        <input type="number" id="journalSales" class="form-input" placeholder="Sales Revenue (₹)">
-        <input type="number" id="journalExpenses" class="form-input" placeholder="Expenses (₹)">
-        <input type="number" id="journalUnits" class="form-input" placeholder="Units Sold (Optional)">
-        <button class="btn btn-primary btn-block hover-lift" id="logJournalBtn" style="margin-top: 15px;">Save Entry</button>
-        <p id="journalLogStatus" style="color: var(--primary); font-weight: bold; display: none; margin-top:10px;">Saved successfully!</p>
+      <div>
+        <h4>Mudra Loans</h4>
+        <p>Collateral-free institutional credit.</p>
+        <a href="https://financialservices.gov.in/pradhan-mantri-mudra-yojana-pmmy" target="_blank">Visit Portal ↗</a>
       </div>
-
-      <!-- Ask Ledger AI Form -->
-      <div class="step-card" style="margin-bottom:0; background: #F8FAFC; border-color: var(--line);">
-        <h3 style="margin-top:0;">Ask Your Ledger</h3>
-        <p style="font-size: 13px; color: var(--text-light);">e.g., "What was my highest sales day?" or "Show total expenses."</p>
-        <input type="text" id="journalQuery" class="form-input" placeholder="Ask AI about records...">
-        <button class="btn btn-primary btn-block hover-lift" id="askJournalBtn" style="margin-top: 15px; background: #0284C7;">Ask Ledger AI</button>
-        <div id="journalAnswer" style="margin-top: 12px; font-weight: 500; font-size: 14px;"></div>
+      <div>
+        <h4>Ministry Helpline</h4>
+        <p>MSME Helpdesk: <strong>011-24011283</strong></p>
+        <a href="https://msme.gov.in" target="_blank">Visit Ministry ↗</a>
       </div>
     </div>
+    <hr>
+    <p>Copyright&copy; 2026 Team ArthX - All Rights are Reserved</p>
+  </footer>
 
-    <!-- Journal History Table -->
-    <div class="step-card" style="margin-top: 20px; margin-bottom: 0;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <h3 style="margin:0;">Recent Ledger Records</h3>
-        <button class="btn btn-secondary hover-lift" id="loadEntriesBtn" style="padding: 6px 12px; font-size: 13px;">Refresh Table</button>
-      </div>
-      <div style="overflow-x: auto;">
-        <table id="journalTable" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
-          <thead>
-            <tr style="border-bottom: 2px solid var(--line); color: var(--text-light);">
-              <th style="padding: 8px;">Date</th>
-              <th style="padding: 8px;">Sales (₹)</th>
-              <th style="padding: 8px;">Expenses (₹)</th>
-              <th style="padding: 8px;">Units Sold</th>
-            </tr>
-          </thead>
-          <tbody id="journalTableBody">
-            <tr><td colspan="4" style="padding: 12px; text-align: center; color: var(--text-light);">Click 'Refresh Table' to load entries.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <!-- REQUIRED DOCUMENTS CHECKLIST -->
-  <section class="documents-section unified-card" style="padding: 25px;">
-    <h3 style="margin-top:0" data-i18n="docsTitle">Required Documents Checklist</h3>
-    <p class="field-hint" style="color: var(--text-light); font-size: 14px;">Keep these ready before visiting the local bank or Common Service Center (CSC).</p>
-    <ul class="doc-checklist">
-      <li><label><input type="checkbox"> <span>Passport Size Photographs (2)</span></label></li>
-      <li><label><input type="checkbox"> <span>Identity Proof (Aadhaar/Voter ID/PAN)</span></label></li>
-      <li><label><input type="checkbox"> <span>Address Proof (Electricity Bill/Ration Card)</span></label></li>
-      <li><label><input type="checkbox"> <span>Quotation of Machinery / Equipment</span></label></li>
-      <li><label><input type="checkbox"> <span>Project Report (ArthSaarthak AI Report)</span></label></li>
-    </ul>
-  </section>
 </main>
 
-<!-- FLOATING AI CHAT WIDGET -->
+<!-- BOTTOM TAB BAR -->
+<nav class="bottom-nav">
+  <button class="nav-item active" data-view="home" type="button">
+    <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9a1 1 0 0 0 1 1h3v-6h4v6h3a1 1 0 0 0 1-1v-9"/></svg></span>
+    <span class="nav-label" data-i18n="navHome">Home</span>
+  </button>
+  <button class="nav-item" data-view="journal" type="button">
+    <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h7M9 11h7"/></svg></span>
+    <span class="nav-label" data-i18n="navJournal">Journal</span>
+  </button>
+  <button class="nav-item" data-view="tools" type="button">
+    <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-6"/></svg></span>
+    <span class="nav-label" data-i18n="navTools">Tools</span>
+  </button>
+  <button class="nav-item" id="navChatBtn" type="button">
+    <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
+    <span class="nav-label" data-i18n="navChat">Chat</span>
+  </button>
+</nav>
+
+<!-- FLOATING AI CHAT WIDGET (opened from bottom nav "Chat") -->
 <button id="chatToggleBtn" class="chat-toggle-btn" aria-label="Open AI Assistant" title="Open AI Assistant">💬</button>
 
 <div id="floatingChatWidget" class="floating-chat-widget hidden">
@@ -222,78 +279,47 @@
 <!-- AUTHENTICATION MODAL -->
 <div id="authModal" class="auth-modal-overlay hidden">
   <div class="auth-modal-content">
-    <button id="closeAuthModalBtn" class="close-chat-btn" style="color: var(--text-main); float: right; font-size: 20px; cursor: pointer;">✖</button>
+    <button id="closeAuthModalBtn" class="modal-close-x">✖</button>
     <div class="auth-tabs">
       <button class="tab-btn active" data-tab="login">Login</button>
       <button class="tab-btn" data-tab="signup">Sign Up</button>
     </div>
-    
+
     <form id="loginForm" class="auth-form">
-      <h3 style="margin-top:0;">Welcome Back</h3>
+      <h3>Welcome Back</h3>
       <input type="email" class="form-input" placeholder="Email Address" required>
       <input type="password" class="form-input" placeholder="Password" required>
-      <button type="submit" class="btn btn-primary btn-block hover-lift" style="margin-top: 15px;">Login</button>
+      <button type="submit" class="btn btn-primary btn-block">Login</button>
     </form>
 
     <form id="signupForm" class="auth-form hidden">
-      <h3 style="margin-top:0;">Create an Account</h3>
+      <h3>Create an Account</h3>
       <input type="text" class="form-input" placeholder="Full Name" required>
       <input type="email" class="form-input" placeholder="Email Address" required>
       <input type="password" class="form-input" placeholder="Create Password" required>
-      <button type="submit" class="btn btn-primary btn-block hover-lift" style="margin-top: 15px;">Sign Up</button>
+      <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
     </form>
   </div>
 </div>
 
 <!-- SURVIVAL SIMULATION MODAL -->
 <div id="simModalOverlay" class="auth-modal-overlay hidden">
-  <div class="auth-modal-content" style="width: 480px; max-width: 95vw;">
-    <button id="closeSimModalBtn" class="close-chat-btn" style="color: var(--text-main); float: right; font-size: 20px; cursor: pointer;">✖</button>
-    <h3 style="margin-top:0; color: #065F46;">⚡ AI Business Survival Simulator</h3>
-    <p class="field-hint" style="font-size: 13px; color: var(--text-light); margin-bottom: 15px;">Simulate 1,000 seasonal variations to estimate your 12-month survival rate.</p>
-    
-    <div class="input-grid" style="grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+  <div class="auth-modal-content sim-modal">
+    <button id="closeSimModalBtn" class="modal-close-x">✖</button>
+    <h3 class="tool-title-green">⚡ AI Business Survival Simulator</h3>
+    <p class="field-hint">Simulate 1,000 seasonal variations to estimate your 12-month survival rate.</p>
+
+    <div class="input-grid input-grid-2">
       <input type="number" id="simInitialCash" class="form-input" placeholder="Initial Capital (₹)" value="50000">
       <input type="number" id="simMonthlyRev" class="form-input" placeholder="Monthly Revenue (₹)" value="30000">
       <input type="number" id="simMonthlyExp" class="form-input" placeholder="Monthly Expenses (₹)" value="18000">
       <input type="number" id="simEmi" class="form-input" placeholder="Monthly EMI (₹)" value="4500">
     </div>
-    
-    <button class="btn btn-primary btn-block hover-lift" id="runSimBtn" style="background: #10B981;">Run Simulations</button>
-    <div id="simulationResult" style="margin-top: 15px; display: none; padding: 12px; background: #f0fdf4; border-radius: 8px; border: 1px solid #A7F3D0;"></div>
+
+    <button class="btn btn-primary btn-block btn-green" id="runSimBtn">Run Simulations</button>
+    <div id="simulationResult" class="sim-result-box"></div>
   </div>
 </div>
-
-<footer class="site-footer">
-  <div class="wrap">
-    <div class="portal-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; text-align: left; margin-bottom: 25px;">
-      <div>
-        <h4 style="margin: 0 0 8px 0; color: #1E293B;">Udyam Registration</h4>
-        <p style="font-size: 13px; color: var(--text-light); margin: 0 0 8px 0;">Official MSME registration portal.</p>
-        <a href="https://udyamregistration.gov.in" target="_blank" style="color: var(--primary); font-weight: 600; text-decoration: none; font-size: 13px;">Visit Portal ↗</a>
-      </div>
-      <div>
-        <h4 style="margin: 0 0 8px 0; color: #1E293B;">PMEGP Portal</h4>
-        <p style="font-size: 13px; color: var(--text-light); margin: 0 0 8px 0;">Credit-linked subsidy schemes.</p>
-        <a href="https://pmegp.msme.gov.in" target="_blank" style="color: var(--primary); font-weight: 600; text-decoration: none; font-size: 13px;">Visit Portal ↗</a>
-      </div>
-      <div>
-        <h4 style="margin: 0 0 8px 0; color: #1E293B;">Mudra Loans</h4>
-        <p style="font-size: 13px; color: var(--text-light); margin: 0 0 8px 0;">Collateral-free institutional credit.</p>
-        <a href="https://financialservices.gov.in/pradhan-mantri-mudra-yojana-pmmy" target="_blank" style="color: var(--primary); font-weight: 600; text-decoration: none; font-size: 13px;">Visit Portal ↗</a>
-      </div>
-      <div>
-        <h4 style="margin: 0 0 8px 0; color: #1E293B;">Ministry Helpline</h4>
-        <p style="font-size: 13px; color: var(--text-light); margin: 0 0 4px 0;">MSME Helpdesk: <strong>011-24011283</strong></p>
-        <a href="https://msme.gov.in" target="_blank" style="color: var(--primary); font-weight: 600; text-decoration: none; font-size: 13px;">Visit Ministry ↗</a>
-      </div>
-    </div>
-    <hr style="border: 0; border-top: 1px solid var(--line); margin: 20px 0;">
-    <p>Copyright&copy; 2026 Team ArthX - All Rights are Reserved</p>
-  </div>
-</footer>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script src="script.js"></script>
 </body>
