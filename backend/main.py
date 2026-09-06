@@ -21,11 +21,13 @@ from engines.journal.query import answer_journal_question
 from google.genai.errors import ServerError
 
 from engines.market.mandi_price_service import get_mandi_price_mapping
+from engines.market.audience_service import get_target_audience_mapping
 
 from engines.market.competitor_service import (
     refresh_competitors,
     get_stored_competitors,
     resolve_location_id,
+    get_location,
 )
 
 app = FastAPI()
@@ -98,6 +100,18 @@ def get_competitor_mapping(location_id: int | None, business_category: str | Non
 
 def get_mandi_mapping(location_id: int | None, business_category: str | None) -> dict | None:
     return get_mandi_price_mapping(location_id, business_category)
+
+def get_audience_mapping(location_id: int | None, fallback_district: str | None,
+                          business_category: str | None, competitor_mapping: dict | None) -> dict | None:
+    district = fallback_district
+    if location_id is not None:
+        try:
+            location = get_location(location_id)
+            district = location.get("district") or fallback_district
+        except ValueError:
+            pass  # bad location_id -- fall back to whatever the LLM extracted
+    competitor_count = competitor_mapping.get("competitor_count") if competitor_mapping else None
+    return get_target_audience_mapping(district, business_category, competitor_count)
 
 
 @app.post("/feasibility")
@@ -179,6 +193,9 @@ def chat(req: ChatRequest):
 
     competitor_mapping = get_competitor_mapping(resolved_location_id, extracted.get("business_category"))
     mandi_mapping = get_mandi_mapping(resolved_location_id, extracted.get("business_category"))
+    audience_mapping = get_audience_mapping(
+    resolved_location_id, extracted.get("district"), extracted.get("business_category"), competitor_mapping
+    )
     eligibility = check_eligibility(user_profile, scheme["id"])
 
     loan = calculate_loan_structure(extracted["project_cost"], extracted.get("margin_pct", 0.10))
@@ -209,6 +226,7 @@ def chat(req: ChatRequest):
         experience_level=req.experience_level,
         competitor_mapping=competitor_mapping,
         mandi_mapping=mandi_mapping,
+        audience_mapping=audience_mapping,
     )
 
     return {
@@ -221,6 +239,7 @@ def chat(req: ChatRequest):
         "swot": swot,
         "competitor_mapping": competitor_mapping,
         "mandi_mapping": mandi_mapping,
+        "audience_mapping": audience_mapping,
     }
 
 

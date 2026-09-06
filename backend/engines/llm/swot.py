@@ -25,6 +25,7 @@ LOCAL MARKET DATA (illustrative unless stated otherwise):
 - Nearby population within reach: {nearby_population}
 - Existing competitors in this category locally: {competitor_count}
 - Average local price for this category: {avg_price}
+- Estimated potential customers for you (population & competition based): {estimated_customers}
 - Is this market data illustrative/seeded: {is_illustrative}
 
 KNOWN CATEGORY-LEVEL PATTERNS (general knowledge, not location-specific):
@@ -53,6 +54,7 @@ def generate_swot(
     experience_level: str = "intermediate",
     competitor_mapping: dict | None = None,
     mandi_mapping: dict | None = None,
+    audience_mapping: dict | None = None,
 ) -> dict:
     """
     location: {"village_name", "block", "district", "state"}
@@ -92,6 +94,7 @@ def generate_swot(
         nearby_population=market_data.get("nearby_population", "Not available"),
         competitor_count=market_data.get("competitor_count", "Not available"),
         avg_price=market_data.get("avg_price", "Not available"),
+        estimated_customers=market_data.get("estimated_customers", "Not available"),
         is_illustrative=market_data.get("is_illustrative", True),
         seasonal_notes=category_notes["seasonal_notes"],
         supply_chain_risks=category_notes["supply_chain_risks"],

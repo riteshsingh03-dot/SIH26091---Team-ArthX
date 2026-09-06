@@ -99,6 +99,16 @@ CREATE TABLE IF NOT EXISTS mandi_prices_avg (
     UNIQUE (location_id, business_category, commodity)
 );
 
+CREATE TABLE IF NOT EXISTS census_district_population (
+    id SERIAL PRIMARY KEY,
+    state_name TEXT NOT NULL,
+    district_name TEXT NOT NULL,
+    population BIGINT,
+    households BIGINT,
+    source TEXT DEFAULT 'census_2011',
+    UNIQUE (state_name, district_name)
+);
+
 CREATE TABLE IF NOT EXISTS eligibility_rules (
     id SERIAL PRIMARY KEY,
     scheme_id INTEGER NOT NULL REFERENCES schemes(id),
