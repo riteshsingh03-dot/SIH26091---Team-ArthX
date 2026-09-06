@@ -101,9 +101,9 @@ def get_competitor_mapping(location_id: int | None, business_category: str | Non
 def get_mandi_mapping(location_id: int | None, business_category: str | None) -> dict | None:
     return get_mandi_price_mapping(location_id, business_category)
 
-def get_audience_mapping(location_id: int | None, fallback_district: str | None,
+def get_audience_mapping(location_id: int | None, fallback_district: str | None, fallback_village: str | None,
                           business_category: str | None, competitor_mapping: dict | None) -> dict | None:
-    district = fallback_district
+    district = fallback_district or fallback_village
     if location_id is not None:
         try:
             location = get_location(location_id)
@@ -194,7 +194,8 @@ def chat(req: ChatRequest):
     competitor_mapping = get_competitor_mapping(resolved_location_id, extracted.get("business_category"))
     mandi_mapping = get_mandi_mapping(resolved_location_id, extracted.get("business_category"))
     audience_mapping = get_audience_mapping(
-    resolved_location_id, extracted.get("district"), extracted.get("business_category"), competitor_mapping
+    resolved_location_id, extracted.get("district"), extracted.get("village_name"),
+    extracted.get("business_category"), competitor_mapping
     )
     eligibility = check_eligibility(user_profile, scheme["id"])
 

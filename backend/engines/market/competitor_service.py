@@ -141,4 +141,16 @@ def resolve_location_id(village_name: str = None, block: str = None, district: s
             if row:
                 return row[0]
 
+        # Fallback: a single ambiguous place name from extraction.py may have
+        # landed in village_name even though it's actually a district-level name
+        # (e.g. "Balrampur" as a district, not a specific village).
+        if village_name:
+            row = conn.execute(text("""
+                SELECT id FROM locations
+                WHERE LOWER(district) = LOWER(:village_name)
+                LIMIT 1
+            """), {"village_name": village_name}).first()
+            if row:
+                return row[0]
+
     return None
