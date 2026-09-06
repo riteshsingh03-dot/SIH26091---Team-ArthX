@@ -20,6 +20,8 @@ from engines.journal.query import answer_journal_question
 
 from google.genai.errors import ServerError
 
+from engines.market.mandi_price_service import get_mandi_price_mapping
+
 from engines.market.competitor_service import (
     refresh_competitors,
     get_stored_competitors,
@@ -93,6 +95,9 @@ def get_competitor_mapping(location_id: int | None, business_category: str | Non
     except (ValueError, RuntimeError):
         # bad location_id or OSM down -- don't break the whole feasibility report over this
         return None
+
+def get_mandi_mapping(location_id: int | None, business_category: str | None) -> dict | None:
+    return get_mandi_price_mapping(location_id, business_category)
 
 
 @app.post("/feasibility")
@@ -173,6 +178,7 @@ def chat(req: ChatRequest):
     }
 
     competitor_mapping = get_competitor_mapping(resolved_location_id, extracted.get("business_category"))
+    mandi_mapping = get_mandi_mapping(resolved_location_id, extracted.get("business_category"))
     eligibility = check_eligibility(user_profile, scheme["id"])
 
     loan = calculate_loan_structure(extracted["project_cost"], extracted.get("margin_pct", 0.10))
@@ -202,6 +208,7 @@ def chat(req: ChatRequest):
         },
         experience_level=req.experience_level,
         competitor_mapping=competitor_mapping,
+        mandi_mapping=mandi_mapping,
     )
 
     return {
@@ -213,6 +220,7 @@ def chat(req: ChatRequest):
         "retrieved_chunks": retrieved,
         "swot": swot,
         "competitor_mapping": competitor_mapping,
+        "mandi_mapping": mandi_mapping,
     }
 
 

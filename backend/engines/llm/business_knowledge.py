@@ -29,3 +29,25 @@ DEFAULT_NOTES = {
 def get_category_notes(business_category: str) -> dict:
     key = (business_category or "").strip().lower().replace(" ", "_")
     return BUSINESS_CATEGORY_NOTES.get(key, DEFAULT_NOTES)
+
+
+# --- Mandi (Agmarknet) commodity mapping -----------------------------------
+# Agmarknet only tracks raw agricultural commodities (Wheat, Onion, Cotton,
+# Potato, etc.) -- it has no notion of "Dairy" or "Retail" as a commodity.
+# This is a best-effort MVP mapping: categories below with a real commodity
+# use it (sometimes as an input-cost proxy, not a product price). Categories
+# left as [] simply won't get mandi data -- that's correct, not a bug.
+# Verify these exact commodity strings against what your target districts'
+# markets actually report before relying on them.
+BUSINESS_CATEGORY_TO_MANDI_COMMODITIES = {
+    "dairy": [],              # no raw-milk series in this resource
+    "retail": [],             # too generic to map to one commodity
+    "textiles": ["Cotton"],   # proxy for raw material cost, not finished goods price
+    "food_processing": ["Wheat", "Rice", "Potato", "Onion", "Tomato"],  # broad staple proxy
+    "handicrafts": [],        # raw materials (wood, dyes) aren't in this dataset
+}
+
+
+def get_mandi_commodities(business_category: str) -> list[str]:
+    key = (business_category or "").strip().lower().replace(" ", "_")
+    return BUSINESS_CATEGORY_TO_MANDI_COMMODITIES.get(key, [])

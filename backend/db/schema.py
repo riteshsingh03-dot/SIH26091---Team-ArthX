@@ -71,6 +71,34 @@ CREATE TABLE IF NOT EXISTS market_competitors (
     last_updated TIMESTAMP DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS mandi_prices_raw (
+    id SERIAL PRIMARY KEY,
+    location_id INTEGER NOT NULL REFERENCES locations(id),
+    business_category TEXT NOT NULL,
+    commodity TEXT NOT NULL,
+    market_name TEXT,
+    state TEXT,
+    district TEXT,
+    min_price NUMERIC,
+    max_price NUMERIC,
+    modal_price NUMERIC,
+    arrival_date TEXT,
+    source TEXT DEFAULT 'data_gov_in_agmarknet',
+    fetched_at TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS mandi_prices_avg (
+    id SERIAL PRIMARY KEY,
+    location_id INTEGER NOT NULL REFERENCES locations(id),
+    business_category TEXT NOT NULL,
+    commodity TEXT NOT NULL,
+    avg_modal_price NUMERIC,
+    sample_size INTEGER,
+    is_illustrative BOOLEAN NOT NULL DEFAULT FALSE,
+    last_updated DATE,
+    UNIQUE (location_id, business_category, commodity)
+);
+
 CREATE TABLE IF NOT EXISTS eligibility_rules (
     id SERIAL PRIMARY KEY,
     scheme_id INTEGER NOT NULL REFERENCES schemes(id),

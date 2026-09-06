@@ -51,7 +51,8 @@ def generate_swot(
     location: dict,
     market_data: dict | None = None,
     experience_level: str = "intermediate",
-    competitor_mapping: dict | None = None
+    competitor_mapping: dict | None = None,
+    mandi_mapping: dict | None = None,
 ) -> dict:
     """
     location: {"village_name", "block", "district", "state"}
@@ -61,11 +62,19 @@ def generate_swot(
     """
     category_notes = get_category_notes(business_category)
     market_data = market_data or {}
+
     if competitor_mapping is not None and competitor_mapping.get("competitor_count") is not None:
         market_data = {
             **market_data,
             "competitor_count": competitor_mapping["competitor_count"],
             "is_illustrative": False,  # this came from live OSM data, not seed data
+        }
+
+    if mandi_mapping is not None and mandi_mapping.get("avg_price") is not None:
+        market_data = {
+            **market_data,
+            "avg_price": mandi_mapping["avg_price"],
+            "is_illustrative": False,  # this came from live Agmarknet data, not seed data
         }
 
     style_instruction = EXPERIENCE_STYLE_GUIDANCE.get(
