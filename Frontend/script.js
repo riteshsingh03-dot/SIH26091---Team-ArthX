@@ -1,5 +1,5 @@
 // Point this to your FastAPI local server
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "https://sih26091-team-arthx.onrender.com";
 
 const i18n = {
   en: {
