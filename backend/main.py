@@ -80,23 +80,22 @@ class FeasibilityRequest(BaseModel):
     experience_level: str = "intermediate"
     location_id: int | None = None
 
-
 def get_competitor_mapping(location_id: int | None, business_category: str | None) -> dict | None:
     if location_id is None or business_category is None:
         return None
     try:
         rows = get_stored_competitors(location_id, business_category)
         if not rows:
-            # nothing cached yet -> fetch live from OSM
             refresh_competitors(location_id, business_category)
             rows = get_stored_competitors(location_id, business_category)
         return {
             "competitor_count": len(rows),
-            "nearest": rows[:5],  # top 5 closest, keep payload light
+            "nearest": rows[:5],
         }
-    except (ValueError, RuntimeError):
-        # bad location_id or OSM down -- don't break the whole feasibility report over this
-        return None
+    except ValueError:
+        return None  # bad location_id -- nothing we can do
+    except RuntimeError as e:
+        return {"competitor_count": None, "nearest": [], "error": "osm_temporarily_unavailable", "detail": str(e)}
 
 def get_mandi_mapping(location_id: int | None, business_category: str | None) -> dict | None:
     return get_mandi_price_mapping(location_id, business_category)

@@ -52,18 +52,23 @@ COLUMNS = [
 # Extend this as you need more categories.
 CATEGORY_PRESETS = {
     "dairy shop": ("shop", "dairy"),
+    "dairy": ("shop", "dairy"), 
     "cafe": ("amenity", "cafe"),
     "restaurant": ("amenity", "restaurant"),
     "bakery": ("shop", "bakery"),
     "supermarket": ("shop", "supermarket"),
     "convenience store": ("shop", "convenience"),
+    "retail": ("shop", "convenience"),
     "pharmacy": ("amenity", "pharmacy"),
     "clothing store": ("shop", "clothes"),
+    "textiles": ("shop", "clothes"), 
     "hardware store": ("shop", "hardware"),
     "electronics store": ("shop", "electronics"),
     "gym": ("leisure", "fitness_centre"),
     "salon": ("shop", "hairdresser"),
     "bookstore": ("shop", "books"),
+    "food_processing": ("shop", "farm"),
+    "handicrafts": ("shop", "gift"), 
 }
 
 
@@ -92,16 +97,31 @@ def resolve_category(category):
     return ("shop", guess)
 
 
-def _run_overpass_query(query, timeout=30):
+def _run_overpass_query(query, timeout=30, max_retries_per_endpoint=2):
+    """
+    Tries each endpoint in turn. On 429 (rate limited) specifically, retries
+    the SAME endpoint with exponential backoff (2s, 4s) before giving up on
+    it and moving to the next mirror -- a plain sleep(1) isn't enough to
+    clear a real rate limit and just burns through both mirrors instantly.
+    """
     last_err = None
     for endpoint in OVERPASS_ENDPOINTS:
-        try:
-            resp = requests.post(endpoint, data={"data": query}, timeout=timeout)
-            if resp.status_code == 200:
-                return resp.json()
-            last_err = RuntimeError(f"{endpoint} returned HTTP {resp.status_code}")
-        except requests.RequestException as e:
-            last_err = e
+        for attempt in range(max_retries_per_endpoint):
+            try:
+                resp = requests.post(endpoint, data={"data": query}, timeout=timeout)
+                if resp.status_code == 200:
+                    return resp.json()
+                if resp.status_code == 429:
+                    wait = 2 * (2 ** attempt)  # 2s, 4s
+                    last_err = RuntimeError(f"{endpoint} returned HTTP 429 (rate limited)")
+                    time.sleep(wait)
+                    continue
+                # non-429 error -- no point retrying this endpoint, move on
+                last_err = RuntimeError(f"{endpoint} returned HTTP {resp.status_code}")
+                break
+            except requests.RequestException as e:
+                last_err = e
+                break
         time.sleep(1)  # be polite before trying the next mirror
     raise RuntimeError(f"All Overpass endpoints failed. Last error: {last_err}")
 
