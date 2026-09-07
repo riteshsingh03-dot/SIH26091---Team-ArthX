@@ -23,6 +23,8 @@ from google.genai.errors import ServerError
 from engines.market.mandi_price_service import get_mandi_price_mapping
 from engines.market.audience_service import get_target_audience_mapping
 
+from engines.financial.cashflow import simulate_survival
+
 from engines.market.competitor_service import (
     refresh_competitors,
     get_stored_competitors,
@@ -41,6 +43,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class SurvivalSimRequest(BaseModel):
+    initial_cash: float
+    base_monthly_revenue: float
+    base_monthly_expenses: float
+    emi: float = 0
+    iterations: int = 1000
+    months: int = 12
 
 class SensitivityRequest(BaseModel):
     base_inputs: dict
@@ -266,3 +275,17 @@ def list_journal_entries(start_date: str = None, end_date: str = None):
 @app.post("/journal/ask")
 def ask_journal(req: JournalQuestionRequest):
     return answer_journal_question(req.question)
+
+@app.post("/simulate/survival")
+def simulate_survival_endpoint(req: SurvivalSimRequest):
+    try:
+        return simulate_survival(
+            initial_cash=req.initial_cash,
+            base_monthly_revenue=req.base_monthly_revenue,
+            base_monthly_expenses=req.base_monthly_expenses,
+            emi=req.emi,
+            months=req.months,
+            iterations=req.iterations,
+        )
+    except InvalidFinancialInput as e:
+        raise HTTPException(status_code=400, detail=str(e))
