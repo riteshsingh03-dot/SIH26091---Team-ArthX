@@ -392,21 +392,21 @@ function renderReport(data) {
 
   // --- NEW: COMPETITOR MAPPING RENDERER ---
   let competitorHTML = "";
-  if (data.competitor_mapping && data.competitor_mapping.length > 0) {
-      competitorHTML = `
-      <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 20px 0;">
-      <h3 style="margin-top:0">Nearby Competitors (Live OSM Data)</h3>
-      <ul class="competitor-list">
-        ${data.competitor_mapping.slice(0, 5).map(comp => `
-          <li class="competitor-card">
-            <span class="competitor-name">${comp.name || 'Unnamed Business'}</span>
-            <span class="competitor-dist">${comp.distance_km} km away</span>
-          </li>
-        `).join('')}
-      </ul>
-      `;
-  } else if (data.competitor_mapping && data.competitor_mapping.length === 0) {
-      competitorHTML = `<p><em>No immediate competitors found in the OpenStreetMap database for this radius.</em></p>`;
+  if (data.competitor_mapping && data.competitor_mapping.nearest && data.competitor_mapping.nearest.length > 0) {
+    competitorHTML = `
+    <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 20px 0;">
+    <h3 style="margin-top:0">Nearby Competitors (Live OSM Data)</h3>
+    <ul class="competitor-list">
+      ${data.competitor_mapping.nearest.slice(0, 5).map(comp => `
+        <li class="competitor-card">
+          <span class="competitor-name">${comp.name || 'Unnamed Business'}</span>
+          <span class="competitor-dist">${comp.distance_km} km away</span>
+        </li>
+      `).join('')}
+    </ul>
+    `;
+  } else if (data.competitor_mapping && data.competitor_mapping.nearest && data.competitor_mapping.nearest.length === 0) {
+    competitorHTML = `<p><em>No immediate competitors found in the OpenStreetMap database for this radius.</em></p>`;
   }
 
   content.innerHTML = `
