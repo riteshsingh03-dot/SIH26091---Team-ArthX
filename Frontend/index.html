@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ArthSaarthak — AI Business Assistant</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArthSaarthak — AI Business Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 
@@ -30,8 +30,8 @@
         <option value="te">తెలుగు (Telugu)</option>
         <option value="ta">தமிழ் (Tamil)</option>
       </select>
-      <button id="openAuthModalBtn" class="btn btn-secondary btn-sm">Sign Up / Login</button>
-      <button id="logoutBtn" class="btn btn-secondary btn-sm hidden">Logout</button>
+      <button id="openAuthModalBtn" class="btn btn-secondary btn-sm" data-i18n="loginSignupBtn">Sign Up / Login</button>
+      <button id="logoutBtn" class="btn btn-secondary btn-sm hidden" data-i18n="logoutBtn">Logout</button>
     </div>
   </div>
 </header>
@@ -42,7 +42,7 @@
   <section class="app-view active-view" id="view-home">
 
     <section class="hero unified-card">
-      <p class="eyebrow">For village and small-town entrepreneurs</p>
+      <p class="eyebrow" data-i18n="heroEyebrow">For village and small-town entrepreneurs</p>
       <h1 data-i18n="heroTitle">Turn your savings into a funded business plan.</h1>
       <p class="hero-sub" data-i18n="heroSub">Tell us your location and available cash. We calculate your total budget, map local competitors, and match you with government schemes.</p>
     </section>
@@ -62,24 +62,24 @@
       <h2 data-i18n="wizardTitle">Business & Location Setup</h2>
 
       <div class="step-card">
-        <p class="step-label">1. Personal & Contact Details</p>
+        <p class="step-label" data-i18n="step1Label">1. Personal & Contact Details</p>
         <div class="input-grid">
-          <input type="text" id="userNameInput" class="form-input" placeholder="Full Name">
-          <input type="text" id="userPhoneInput" class="form-input" placeholder="Phone Number">
+          <input type="text" id="userNameInput" class="form-input" data-i18n-ph="phFullName" placeholder="Full Name">
+          <input type="text" id="userPhoneInput" class="form-input" data-i18n-ph="phPhone" placeholder="Phone Number">
         </div>
       </div>
 
       <div class="step-card">
-        <p class="step-label">2. Granular Location & Area Type</p>
+        <p class="step-label" data-i18n="step2Label">2. Granular Location & Area Type</p>
         <div class="toggle-row">
           <button type="button" class="pill-btn" data-area="rural" aria-pressed="true" data-i18n="ruralBtn">Village / Gram Panchayat</button>
           <button type="button" class="pill-btn" data-area="urban" aria-pressed="false" data-i18n="urbanBtn">Town / City</button>
         </div>
         <div class="input-grid input-grid-4">
-          <input type="text" id="stateInput" class="form-input" placeholder="State (e.g. Uttar Pradesh)">
-          <input type="text" id="districtInput" class="form-input" placeholder="District">
-          <input type="text" id="blockInput" class="form-input" placeholder="Block / Tehsil">
-          <input type="text" id="villageInput" class="form-input" placeholder="Village / City Name">
+          <input type="text" id="stateInput" class="form-input" data-i18n-ph="phState" placeholder="State (e.g. Uttar Pradesh)">
+          <input type="text" id="districtInput" class="form-input" data-i18n-ph="phDistrict" placeholder="District">
+          <input type="text" id="blockInput" class="form-input" data-i18n-ph="phBlock" placeholder="Block / Tehsil">
+          <input type="text" id="villageInput" class="form-input" data-i18n-ph="phVillage" placeholder="Village / City Name">
         </div>
       </div>
 
@@ -94,7 +94,7 @@
 
       <div class="step-card">
         <p class="step-label" data-i18n="q3">4. Your Margin Capital (₹)</p>
-        <input type="number" id="marginInput" class="form-input" placeholder="e.g. 50000">
+        <input type="number" id="marginInput" class="form-input" data-i18n-ph="phMargin" placeholder="e.g. 50000">
       </div>
 
       <button class="btn btn-primary btn-large btn-block" id="calcBtn" data-i18n="calcBtn">Generate AI Report</button>
@@ -116,13 +116,13 @@
 
     <section class="documents-section unified-card">
       <h3 data-i18n="docsTitle">Required Documents Checklist</h3>
-      <p class="field-hint">Keep these ready before visiting the local bank or Common Service Center (CSC).</p>
+      <p class="field-hint" data-i18n="docsHint">Keep these ready before visiting the local bank or Common Service Center (CSC).</p>
       <ul class="doc-checklist">
-        <li><label><input type="checkbox"> <span>Passport Size Photographs (2)</span></label></li>
-        <li><label><input type="checkbox"> <span>Identity Proof (Aadhaar/Voter ID/PAN)</span></label></li>
-        <li><label><input type="checkbox"> <span>Address Proof (Electricity Bill/Ration Card)</span></label></li>
-        <li><label><input type="checkbox"> <span>Quotation of Machinery / Equipment</span></label></li>
-        <li><label><input type="checkbox"> <span>Project Report (ArthSaarthak AI Report)</span></label></li>
+        <li><label><input type="checkbox"> <span data-i18n="docPhoto">Passport Size Photographs (2)</span></label></li>
+        <li><label><input type="checkbox"> <span data-i18n="docId">Identity Proof (Aadhaar/Voter ID/PAN)</span></label></li>
+        <li><label><input type="checkbox"> <span data-i18n="docAddr">Address Proof (Electricity Bill/Ration Card)</span></label></li>
+        <li><label><input type="checkbox"> <span data-i18n="docQuote">Quotation of Machinery / Equipment</span></label></li>
+        <li><label><input type="checkbox"> <span data-i18n="docReport">Project Report (ArthSaarthak AI Report)</span></label></li>
       </ul>
     </section>
 
@@ -131,46 +131,46 @@
   <!-- ============ JOURNAL VIEW ============ -->
   <section class="app-view" id="view-journal">
     <section class="journal-section unified-card" id="journalSection">
-      <h2>Business Journal & Tracking</h2>
-      <p class="hero-sub small">Log your daily sales and ask your ledger a question, anytime.</p>
+      <h2 data-i18n="journalTitle">Business Journal & Tracking</h2>
+      <p class="hero-sub small" data-i18n="journalSub">Log your daily sales and ask your ledger a question, anytime.</p>
 
       <div class="journal-grid">
         <div class="step-card accent-green">
-          <h3>Log Daily Entry</h3>
+          <h3 data-i18n="jnlLogTitle">Log Daily Entry</h3>
           <input type="date" id="journalDate" class="form-input">
-          <input type="number" id="journalSales" class="form-input" placeholder="Sales Revenue (₹)">
-          <input type="number" id="journalExpenses" class="form-input" placeholder="Expenses (₹)">
-          <input type="number" id="journalUnits" class="form-input" placeholder="Units Sold (Optional)">
-          <button class="btn btn-primary btn-block" id="logJournalBtn">Save Entry</button>
-          <p id="journalLogStatus" class="save-status">Saved successfully!</p>
+          <input type="number" id="journalSales" class="form-input" data-i18n-ph="phSales" placeholder="Sales Revenue (₹)">
+          <input type="number" id="journalExpenses" class="form-input" data-i18n-ph="phExpenses" placeholder="Expenses (₹)">
+          <input type="number" id="journalUnits" class="form-input" data-i18n-ph="phUnits" placeholder="Units Sold (Optional)">
+          <button class="btn btn-primary btn-block" id="logJournalBtn" data-i18n="jnlSaveBtn">Save Entry</button>
+          <p id="journalLogStatus" class="save-status" data-i18n="jnlSaveStatus">Saved successfully!</p>
         </div>
 
         <div class="step-card accent-blue muted-card">
-          <h3>Ask Your Ledger</h3>
-          <p class="field-hint">e.g. "What was my highest sales day?" or "Show total expenses."</p>
-          <input type="text" id="journalQuery" class="form-input" placeholder="Ask AI about records...">
-          <button class="btn btn-primary btn-block btn-blue" id="askJournalBtn">Ask Ledger AI</button>
+          <h3 data-i18n="jnlAskTitle">Ask Your Ledger</h3>
+          <p class="field-hint" data-i18n="jnlAskHint">e.g. "What was my highest sales day?" or "Show total expenses."</p>
+          <input type="text" id="journalQuery" class="form-input" data-i18n-ph="phJnlQuery" placeholder="Ask AI about records...">
+          <button class="btn btn-primary btn-block btn-blue" id="askJournalBtn" data-i18n="jnlAskBtn">Ask Ledger AI</button>
           <div id="journalAnswer" class="ledger-answer"></div>
         </div>
       </div>
 
       <div class="step-card ledger-table-card">
         <div class="ledger-table-head">
-          <h3>Recent Ledger Records</h3>
-          <button class="btn btn-secondary btn-sm" id="loadEntriesBtn">Refresh Table</button>
+          <h3 data-i18n="jnlRecordsTitle">Recent Ledger Records</h3>
+          <button class="btn btn-secondary btn-sm" id="loadEntriesBtn" data-i18n="jnlRefreshBtn">Refresh Table</button>
         </div>
         <div class="table-scroll">
           <table id="journalTable">
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Sales (₹)</th>
-                <th>Expenses (₹)</th>
-                <th>Units Sold</th>
+                <th data-i18n="thDate">Date</th>
+                <th data-i18n="thSales">Sales (₹)</th>
+                <th data-i18n="thExpenses">Expenses (₹)</th>
+                <th data-i18n="thUnits">Units Sold</th>
               </tr>
             </thead>
             <tbody id="journalTableBody">
-              <tr><td colspan="4" class="table-empty">Click 'Refresh Table' to load entries.</td></tr>
+              <tr><td colspan="4" class="table-empty" data-i18n="jnlEmptyState">Click 'Refresh Table' to load entries.</td></tr>
             </tbody>
           </table>
         </div>
@@ -181,8 +181,8 @@
   <!-- ============ FINANCIAL TOOLS VIEW ============ -->
   <section class="app-view" id="view-tools">
     <section class="tools-intro unified-card">
-      <h2>Financial Engines</h2>
-      <p class="hero-sub small">Stress-test your business before you borrow a single rupee.</p>
+      <h2 data-i18n="toolsTitle">Financial Engines</h2>
+      <p class="hero-sub small" data-i18n="toolsSub">Stress-test your business before you borrow a single rupee.</p>
     </section>
 
     <section class="usp-tools-section">
@@ -206,32 +206,32 @@
     <div id="scenarioResultBox" class="unified-card scenario-result"></div>
   </section>
 
-  <!-- FOOTER (visible under every tab) -->
+  <!-- FOOTER -->
   <footer class="site-footer">
     <div class="portal-grid">
       <div>
-        <h4>Udyam Registration</h4>
-        <p>Official MSME registration portal.</p>
-        <a href="https://udyamregistration.gov.in" target="_blank">Visit Portal ↗</a>
+        <h4 data-i18n="ftUdyam">Udyam Registration</h4>
+        <p data-i18n="ftUdyamSub">Official MSME registration portal.</p>
+        <a href="https://udyamregistration.gov.in" target="_blank" data-i18n="ftVisit">Visit Portal ↗</a>
       </div>
       <div>
-        <h4>PMEGP Portal</h4>
-        <p>Credit-linked subsidy schemes.</p>
-        <a href="https://pmegp.msme.gov.in" target="_blank">Visit Portal ↗</a>
+        <h4 data-i18n="ftPmegp">PMEGP Portal</h4>
+        <p data-i18n="ftPmegpSub">Credit-linked subsidy schemes.</p>
+        <a href="https://pmegp.msme.gov.in" target="_blank" data-i18n="ftVisit">Visit Portal ↗</a>
       </div>
       <div>
-        <h4>Mudra Loans</h4>
-        <p>Collateral-free institutional credit.</p>
-        <a href="https://financialservices.gov.in/pradhan-mantri-mudra-yojana-pmmy" target="_blank">Visit Portal ↗</a>
+        <h4 data-i18n="ftMudra">Mudra Loans</h4>
+        <p data-i18n="ftMudraSub">Collateral-free institutional credit.</p>
+        <a href="https://financialservices.gov.in/pradhan-mantri-mudra-yojana-pmmy" target="_blank" data-i18n="ftVisit">Visit Portal ↗</a>
       </div>
       <div>
-        <h4>Ministry Helpline</h4>
-        <p>MSME Helpdesk: <strong>011-24011283</strong></p>
-        <a href="https://msme.gov.in" target="_blank">Visit Ministry ↗</a>
+        <h4 data-i18n="ftHelpline">Ministry Helpline</h4>
+        <p><span data-i18n="ftHelpSub">MSME Helpdesk:</span> <strong>011-24011283</strong></p>
+        <a href="https://msme.gov.in" target="_blank" data-i18n="ftMinistry">Visit Ministry ↗</a>
       </div>
     </div>
     <hr>
-    <p>Copyright&copy; 2026 Team ArthX - All Rights are Reserved</p>
+    <p>Copyright&copy; 2026 Team ArthX - All Rights Reserved</p>
   </footer>
 
 </main>
@@ -256,7 +256,7 @@
   </button>
 </nav>
 
-<!-- FLOATING AI CHAT WIDGET (opened from bottom nav "Chat") -->
+<!-- FLOATING AI CHAT WIDGET -->
 <button id="chatToggleBtn" class="chat-toggle-btn" aria-label="Open AI Assistant" title="Open AI Assistant">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
 </button>
@@ -274,7 +274,7 @@
       <button id="voiceBtn" class="voice-btn" title="Click to speak" aria-label="Speak">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
       </button>
-      <input type="text" id="chatInput" data-i18n="chatInputPlaceholder" placeholder="Type or speak here...">
+      <input type="text" id="chatInput" data-i18n-ph="chatInputPlaceholder" placeholder="Type or speak here...">
       <button class="btn btn-primary" id="chatBtn" data-i18n="sendBtn">Send</button>
     </div>
   </div>
@@ -285,23 +285,23 @@
   <div class="auth-modal-content">
     <button id="closeAuthModalBtn" class="modal-close-x" aria-label="Close">&times;</button>
     <div class="auth-tabs">
-      <button class="tab-btn active" data-tab="login">Login</button>
-      <button class="tab-btn" data-tab="signup">Sign Up</button>
+      <button class="tab-btn active" data-tab="login" data-i18n="tabLogin">Login</button>
+      <button class="tab-btn" data-tab="signup" data-i18n="tabSignup">Sign Up</button>
     </div>
 
     <form id="loginForm" class="auth-form">
-      <h3>Welcome Back</h3>
-      <input type="email" class="form-input" placeholder="Email Address" required>
-      <input type="password" class="form-input" placeholder="Password" required>
-      <button type="submit" class="btn btn-primary btn-block">Login</button>
+      <h3 data-i18n="loginHeading">Welcome Back</h3>
+      <input type="email" class="form-input" data-i18n-ph="phEmail" placeholder="Email Address" required>
+      <input type="password" class="form-input" data-i18n-ph="phPassword" placeholder="Password" required>
+      <button type="submit" class="btn btn-primary btn-block" data-i18n="tabLogin">Login</button>
     </form>
 
     <form id="signupForm" class="auth-form hidden">
-      <h3>Create an Account</h3>
-      <input type="text" class="form-input" placeholder="Full Name" required>
-      <input type="email" class="form-input" placeholder="Email Address" required>
-      <input type="password" class="form-input" placeholder="Create Password" required>
-      <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+      <h3 data-i18n="signupHeading">Create an Account</h3>
+      <input type="text" class="form-input" data-i18n-ph="phFullName" placeholder="Full Name" required>
+      <input type="email" class="form-input" data-i18n-ph="phEmail" placeholder="Email Address" required>
+      <input type="password" class="form-input" data-i18n-ph="phCreatePass" placeholder="Create Password" required>
+      <button type="submit" class="btn btn-primary btn-block" data-i18n="tabSignup">Sign Up</button>
     </form>
   </div>
 </div>
@@ -316,19 +316,19 @@
     <div class="input-grid input-grid-2">
       <div class="field-group">
         <label class="field-label" for="simInitialCash" data-i18n="simLabelCash">Initial Capital (₹)</label>
-        <input type="number" id="simInitialCash" class="form-input" data-i18n="simPlaceholderCash" placeholder="e.g. 50000">
+        <input type="number" id="simInitialCash" class="form-input" data-i18n-ph="simPlaceholderCash" placeholder="e.g. 50000">
       </div>
       <div class="field-group">
         <label class="field-label" for="simMonthlyRev" data-i18n="simLabelRev">Monthly Revenue (₹)</label>
-        <input type="number" id="simMonthlyRev" class="form-input" data-i18n="simPlaceholderRev" placeholder="e.g. 30000">
+        <input type="number" id="simMonthlyRev" class="form-input" data-i18n-ph="simPlaceholderRev" placeholder="e.g. 30000">
       </div>
       <div class="field-group">
         <label class="field-label" for="simMonthlyExp" data-i18n="simLabelExp">Monthly Expenses (₹)</label>
-        <input type="number" id="simMonthlyExp" class="form-input" data-i18n="simPlaceholderExp" placeholder="e.g. 18000">
+        <input type="number" id="simMonthlyExp" class="form-input" data-i18n-ph="simPlaceholderExp" placeholder="e.g. 18000">
       </div>
       <div class="field-group">
         <label class="field-label" for="simEmi" data-i18n="simLabelEmi">Monthly EMI (₹)</label>
-        <input type="number" id="simEmi" class="form-input" data-i18n="simPlaceholderEmi" placeholder="e.g. 4500">
+        <input type="number" id="simEmi" class="form-input" data-i18n-ph="simPlaceholderEmi" placeholder="e.g. 4500">
       </div>
     </div>
 
