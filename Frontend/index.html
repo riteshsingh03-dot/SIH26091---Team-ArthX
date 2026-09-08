@@ -105,8 +105,8 @@
         <div class="result-header">
           <h2 data-i18n="reportTitle">Your Business & Financial Report</h2>
           <div class="result-actions">
-            <button id="readAloudBtn" class="btn btn-secondary btn-sm" title="Read Aloud">🔊 Listen</button>
-            <button id="downloadBtn" class="btn btn-secondary btn-sm" data-i18n="downloadBtn">📄 Download / Print</button>
+            <button id="readAloudBtn" class="btn btn-secondary btn-sm" data-i18n="listenBtn">Listen</button>
+            <button id="downloadBtn" class="btn btn-secondary btn-sm" data-i18n="downloadBtn">Download / Print</button>
           </div>
         </div>
         <div id="loadingIndicator" class="spinner" hidden></div>
@@ -188,18 +188,18 @@
     <section class="usp-tools-section">
       <div class="unified-card tool-card">
         <div>
-          <h3 class="tool-title tool-title-green">⚡ AI Survival Simulator</h3>
-          <p class="field-hint">Test your business resilience against market shocks and seasonal demand drops.</p>
+          <h3 class="tool-title tool-title-green" data-i18n="simCardTitle">AI Survival Simulator</h3>
+          <p class="field-hint" data-i18n="simCardDesc">Test your business resilience against market shocks and seasonal demand drops.</p>
         </div>
-        <button id="openSimModalBtn" class="btn btn-primary btn-green">Open Simulator</button>
+        <button id="openSimModalBtn" class="btn btn-primary btn-green" data-i18n="openSimBtn">Open Simulator</button>
       </div>
 
       <div class="unified-card tool-card">
         <div>
-          <h3 class="tool-title">📈 Scenario & Pricing Planner</h3>
-          <p class="field-hint">Compare base plans against optimized pricing models to lower breakeven points.</p>
+          <h3 class="tool-title" data-i18n="scenarioCardTitle">Scenario & Pricing Planner</h3>
+          <p class="field-hint" data-i18n="scenarioCardDesc">Compare base plans against optimized pricing models to lower breakeven points.</p>
         </div>
-        <button class="btn btn-primary" id="compareScenariosBtn">Run Scenario Check</button>
+        <button class="btn btn-primary" id="compareScenariosBtn" data-i18n="runScenarioBtn">Run Scenario Check</button>
       </div>
     </section>
 
@@ -257,20 +257,24 @@
 </nav>
 
 <!-- FLOATING AI CHAT WIDGET (opened from bottom nav "Chat") -->
-<button id="chatToggleBtn" class="chat-toggle-btn" aria-label="Open AI Assistant" title="Open AI Assistant">💬</button>
+<button id="chatToggleBtn" class="chat-toggle-btn" aria-label="Open AI Assistant" title="Open AI Assistant">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+</button>
 
 <div id="floatingChatWidget" class="floating-chat-widget hidden">
   <div class="chat-widget-header">
     <h3 data-i18n="chatTitle">Talk to our AI Assistant</h3>
-    <button id="closeChatBtn" class="close-chat-btn" aria-label="Close Chat" title="Close Chat">✖</button>
+    <button id="closeChatBtn" class="close-chat-btn" aria-label="Close Chat" title="Close Chat">&times;</button>
   </div>
   <div class="chat-container">
     <div id="chatHistory" class="chat-history">
       <div class="chat-bubble ai" data-i18n="chatGreeting">Hello! Tell me about your business idea and how much money you have to start.</div>
     </div>
     <div class="chat-input-area">
-      <button id="voiceBtn" class="voice-btn" title="Click to speak">🎤</button>
-      <input type="text" id="chatInput" placeholder="Type or speak here...">
+      <button id="voiceBtn" class="voice-btn" title="Click to speak" aria-label="Speak">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      </button>
+      <input type="text" id="chatInput" data-i18n="chatInputPlaceholder" placeholder="Type or speak here...">
       <button class="btn btn-primary" id="chatBtn" data-i18n="sendBtn">Send</button>
     </div>
   </div>
@@ -279,7 +283,7 @@
 <!-- AUTHENTICATION MODAL -->
 <div id="authModal" class="auth-modal-overlay hidden">
   <div class="auth-modal-content">
-    <button id="closeAuthModalBtn" class="modal-close-x">✖</button>
+    <button id="closeAuthModalBtn" class="modal-close-x" aria-label="Close">&times;</button>
     <div class="auth-tabs">
       <button class="tab-btn active" data-tab="login">Login</button>
       <button class="tab-btn" data-tab="signup">Sign Up</button>
@@ -305,18 +309,30 @@
 <!-- SURVIVAL SIMULATION MODAL -->
 <div id="simModalOverlay" class="auth-modal-overlay hidden">
   <div class="auth-modal-content sim-modal">
-    <button id="closeSimModalBtn" class="modal-close-x">✖</button>
-    <h3 class="tool-title-green">⚡ AI Business Survival Simulator</h3>
-    <p class="field-hint">Simulate 1,000 seasonal variations to estimate your 12-month survival rate.</p>
+    <button id="closeSimModalBtn" class="modal-close-x" aria-label="Close">&times;</button>
+    <h3 class="tool-title-green" data-i18n="simModalTitle">AI Business Survival Simulator</h3>
+    <p class="field-hint" data-i18n="simModalDesc">Simulate 1,000 seasonal variations to estimate your 12-month survival rate.</p>
 
     <div class="input-grid input-grid-2">
-      <input type="number" id="simInitialCash" class="form-input" placeholder="Initial Capital (₹)" value="50000">
-      <input type="number" id="simMonthlyRev" class="form-input" placeholder="Monthly Revenue (₹)" value="30000">
-      <input type="number" id="simMonthlyExp" class="form-input" placeholder="Monthly Expenses (₹)" value="18000">
-      <input type="number" id="simEmi" class="form-input" placeholder="Monthly EMI (₹)" value="4500">
+      <div class="field-group">
+        <label class="field-label" for="simInitialCash" data-i18n="simLabelCash">Initial Capital (₹)</label>
+        <input type="number" id="simInitialCash" class="form-input" data-i18n="simPlaceholderCash" placeholder="e.g. 50000">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="simMonthlyRev" data-i18n="simLabelRev">Monthly Revenue (₹)</label>
+        <input type="number" id="simMonthlyRev" class="form-input" data-i18n="simPlaceholderRev" placeholder="e.g. 30000">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="simMonthlyExp" data-i18n="simLabelExp">Monthly Expenses (₹)</label>
+        <input type="number" id="simMonthlyExp" class="form-input" data-i18n="simPlaceholderExp" placeholder="e.g. 18000">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="simEmi" data-i18n="simLabelEmi">Monthly EMI (₹)</label>
+        <input type="number" id="simEmi" class="form-input" data-i18n="simPlaceholderEmi" placeholder="e.g. 4500">
+      </div>
     </div>
 
-    <button class="btn btn-primary btn-block btn-green" id="runSimBtn">Run Simulations</button>
+    <button class="btn btn-primary btn-block btn-green" id="runSimBtn" data-i18n="runSimBtn">Run Simulations</button>
     <div id="simulationResult" class="sim-result-box"></div>
   </div>
 </div>
