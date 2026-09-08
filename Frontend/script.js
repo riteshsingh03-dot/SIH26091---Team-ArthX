@@ -1,6 +1,20 @@
 // Point this to your FastAPI local server
 const API_BASE_URL = "https://sih26091-team-arthx.onrender.com";
 
+// Language Voice / Speech Synthesis BCP-47 locale map
+const langVoiceMap = {
+  en: "en-IN",
+  hi: "hi-IN",
+  mr: "mr-IN",
+  gu: "gu-IN",
+  bn: "bn-IN",
+  ta: "ta-IN",
+  te: "te-IN",
+  kn: "kn-IN",
+  pa: "pa-IN",
+  ml: "ml-IN"
+};
+
 const i18n = {
   en: {
     tagline: "Smart business funding, in plain words",
@@ -11,7 +25,19 @@ const i18n = {
     wizardTitle: "Or enter details manually", q1: "1. Area Type", ruralBtn: "Village / Rural", urbanBtn: "Town / City",
     q2: "2. Business Category", catDairy: "Dairy Farming", catTailor: "Tailoring", catGrocery: "Grocery Store",
     q3: "3. Your Margin Capital (₹)", calcBtn: "Generate AI Report",
-    reportTitle: "Your Business & Financial Report", downloadBtn: "📄 Download / Print", errorServer: "Could not connect to the server."
+    reportTitle: "Your Business & Financial Report", downloadBtn: "Download / Print", errorServer: "Could not connect to the server.",
+    simInitialCash: "Initial Cash (₹)",
+    simMonthlyRev: "Base Monthly Revenue (₹)",
+    simMonthlyExp: "Base Monthly Expenses (₹)",
+    simEmi: "Monthly EMI (₹)",
+    simulating: "Simulating 1,000 market conditions...",
+    simResults: "Simulation Results",
+    simSurvival: "Survival Probability",
+    simRisk: "Risk Level",
+    simTested: "Tested across",
+    simCycles: "randomized seasonal demand cycles.",
+    simFail: "Simulation engine failed to connect. Ensure backend is running.",
+    navHome: "Home", navJournal: "Journal", navTools: "Tools", navChat: "Chat"
   },
   hi: {
     tagline: "स्मार्ट व्यापार फंडिंग, सरल शब्दों में",
@@ -22,7 +48,109 @@ const i18n = {
     wizardTitle: "या मैन्युअल रूप से विवरण दर्ज करें", q1: "1. क्षेत्र का प्रकार", ruralBtn: "गांव / ग्रामीण", urbanBtn: "शहर / नगर",
     q2: "2. व्यवसाय श्रेणी", catDairy: "डेयरी फार्मिंग", catTailor: "सिलाई", catGrocery: "किराने की दुकान",
     q3: "3. आपकी मार्जिन पूंजी (₹)", calcBtn: "AI रिपोर्ट जनरेट करें",
-    reportTitle: "आपकी व्यावसायिक और वित्तीय रिपोर्ट", downloadBtn: "📄 डाउनलोड / प्रिंट करें", errorServer: "सर्वर से कनेक्ट नहीं हो सका।"
+    reportTitle: "आपकी व्यावसायिक और वित्तीय रिपोर्ट", downloadBtn: "डाउनलोड / प्रिंट करें", errorServer: "सर्वर से कनेक्ट नहीं हो सका।",
+    simInitialCash: "प्रारंभिक नकद (₹)",
+    simMonthlyRev: "आधार मासिक राजस्व (₹)",
+    simMonthlyExp: "आधार मासिक खर्च (₹)",
+    simEmi: "मासिक ईएमआई (₹)",
+    simulating: "1,000 बाजार स्थितियों का सिमुलेशन किया जा रहा है...",
+    simResults: "सिमुलेशन परिणाम",
+    simSurvival: "अस्तित्व की संभावना",
+    simRisk: "जोखिम स्तर",
+    simTested: "परीक्षण किया गया",
+    simCycles: "यादृच्छिक मौसमी मांग चक्रों में।",
+    simFail: "सिमुलेशन इंजन कनेक्ट होने में विफल रहा। सुनिश्चित करें कि बैकएंड चल रहा है।",
+    navHome: "होम", navJournal: "जर्नल", navTools: "टूल्स", navChat: "चैट"
+  },
+  mr: { // Marathi
+    tagline: "स्मार्ट व्यवसाय निधी, सोप्या शब्दात",
+    heroTitle: "तुमच्या बजेटला व्यवसाय योजनेत बदला.",
+    heroSub: "तुमचे स्थान आणि उपलब्ध भांडवल सांगा. आम्ही तुमचे बजेट, स्थानिक स्पर्धक आणि सरकारी योजना शोधून देऊ.",
+    flowTitle: "अर्थसेतु कसे काम करते", flow1: "माहिती भरा", flow2: "AI बाजार विश्लेषण", flow3: "योजना व EMI मिळवा",
+    chatTitle: "AI सहाय्यकाशी बोला", chatGreeting: "नमस्कार! तुमच्या व्यवसायाबद्दल आणि भांडवलाबद्दल सांगा.", sendBtn: "पाठवा",
+    wizardTitle: "किंवा स्वतः माहिती भरा", q1: "1. क्षेत्र प्रकार", ruralBtn: "ग्रामीण", urbanBtn: "शहरी",
+    q2: "2. व्यवसाय प्रकार", catDairy: "डेअरी", catTailor: "शिंपी काम", catGrocery: "किराणा दुकान",
+    q3: "3. तुमची भांडवल रक्कम (₹)", calcBtn: "AI रिपोर्ट तयार करा",
+    reportTitle: "व्यवसाय आणि आर्थिक अहवाल", downloadBtn: "डाउनलोड / प्रिंट करा", errorServer: "सर्व्हरशी संपर्क होऊ शकला नाही.",
+    simInitialCash: "प्रारंभिक रक्कम (₹)", simMonthlyRev: "मासिक उत्पन्न (₹)", simMonthlyExp: "मासिक खर्च (₹)", simEmi: "मासिक हप्ता / EMI (₹)",
+    simulating: "सि्युलेशन सुरू आहे...", simResults: "सि्युलेशन निकाल", simSurvival: "यशस्वी होण्याची शक्यता", simRisk: "जोखीम पातळी",
+    simTested: "परीक्षण केले", simCycles: "हंगामी बाजाराच्या आधारे.", simFail: "सि्युलेशन जोडणी अयशस्वी.",
+    navHome: "मुख्य", navJournal: "नोंदवही", navTools: "साधने", navChat: "चॅट"
+  },
+  gu: { // Gujarati
+    tagline: "સ્માર્ટ બિઝનેસ ફંડિંગ, સરળ શબ્દોમાં",
+    heroTitle: "તમારી બચતને વ્યવસાય યોજનામાં ફેરવો.",
+    heroSub: "તમારું સ્થાન અને બજેટ જણાવો. અમે યોજનાઓ અને સ્પર્ધકોનું વિશ્લેષણ કરીશું.",
+    flowTitle: "અર્થસેતુ કેવી રીતે કામ કરે છે", flow1: "વિગતો દાખલ કરો", flow2: "AI માર્કેટ એનાલિસિસ", flow3: "યોજના અને EMI મેળવો",
+    chatTitle: "AI સહાયક સાથે વાત કરો", chatGreeting: "નમસ્તે! તમારા વ્યવસાય વિચારો જણાવો.", sendBtn: "મોકલો",
+    wizardTitle: "અથવા જાતે વિગતો ભરો", q1: "1. વિસ્તારનો પ્રકાર", ruralBtn: "ગ્રામીણ", urbanBtn: "શહેરી",
+    q2: "2. વ્યવસાય કેટેગરી", catDairy: "ડેરી ફાર્મિંગ", catTailor: "દરજી કામ", catGrocery: "કરિયાણાની દુકાન",
+    q3: "3. તમારી મૂડી (₹)", calcBtn: "AI રિપોર્ટ જનરેટ કરો",
+    reportTitle: "વ્યવસાય અને નાણાકીય અહેવાલ", downloadBtn: "ડાઉનલોડ / પ્રિન્ટ કરો", errorServer: "સર્વર કનેક્ટ થઈ શક્યું નથી.",
+    simInitialCash: "પ્રારંભિક રોકડ (₹)", simMonthlyRev: "માસિક આવક (₹)", simMonthlyExp: "માસિક ખર્ચ (₹)", simEmi: "માસિક EMI (₹)",
+    simulating: "સિબ્યુલેશન પ્રક્રિયા હેઠળ છે...", simResults: "સિબ્યુલેશન પરિણામો", simSurvival: "સફળતાની સંભાવના", simRisk: "જોખમ સ્તર",
+    simTested: "ચકાસાયેલ", simCycles: "બજારના આધારે.", simFail: "એન્જિન કનેક્ટ થવામાં નિષ્ફળ.",
+    navHome: "હોમ", navJournal: "જર્નલ", navTools: "સાધનો", navChat: "ચેટ"
+  },
+  bn: { // Bengali
+    tagline: "সহজ ভাষায় ব্যবসায়িক অর্থায়ন",
+    heroTitle: "আপনার সঞ্চয়কে ব্যবসায় রূপান্তর করুন।",
+    heroSub: "আপনার অবস্থান এবং বাজেট জানান। আমরা সরকারি স্কিম ও বাজার বিশ্লেষণ করব।",
+    flowTitle: "অর্থসেতু যেভাবে কাজ করে", flow1: "তথ্য প্রদান করুন", flow2: "AI বাজার বিশ্লেষণ", flow3: "স্কিম ও EMI পান",
+    chatTitle: "AI সহকারীর সাথে কথা বলুন", chatGreeting: "হ্যালো! আপনার ব্যবসা সম্পর্কিত তথ্য দিন।", sendBtn: "পাঠান",
+    wizardTitle: "অথবা ম্যানুয়ালি তথ্য লিখুন", q1: "১. এলাকার ধরন", ruralBtn: "গ্রাম", urbanBtn: "শহর",
+    q2: "২. ব্যবসার ধরন", catDairy: "ডেরি ফার্ম", catTailor: "দর্জি", catGrocery: "মুদির দোকান",
+    q3: "৩. মূলধন (₹)", calcBtn: "AI রিপোর্ট তৈরি করুন",
+    reportTitle: "ব্যবসা ও আর্থিক রিপোর্ট", downloadBtn: "ডাউনলোড / প্রিন্ট", errorServer: "সার্ভারে সংযোগ করা যায়নি।",
+    simInitialCash: "প্রাথমিক নগদ (₹)", simMonthlyRev: "মাসিক আয় (₹)", simMonthlyExp: "মাসিক খরচ (₹)", simEmi: "মাসিক কিস্তি (₹)",
+    simulating: "সিমুলেশন চলছে...", simResults: "সিমুলেশন ফলাফল", simSurvival: "সফলতার সম্ভাবনা", simRisk: "ঝুঁকির মাত্রা",
+    simTested: "পরীক্ষিত", simCycles: "ঋতুভিত্তিক বাজার চক্রের উপর।", simFail: "সিমুলেশন সংযোগে ব্যর্থ।",
+    navHome: "হোম", navJournal: "জার্নাল", navTools: "টুলস", navChat: "চ্যাট"
+  },
+  ta: { // Tamil
+    tagline: "எளிய முறையில் வணிக நிதி உதவி",
+    heroTitle: "உங்கள் சேமிப்பை தொழிலாக மாற்றவும்.",
+    heroSub: "உங்கள் இடம் மற்றும் நிதியை உள்ளிடவும். நாங்கள் கடன் திட்டங்களை கணக்கிடுகிறோம்.",
+    flowTitle: "அர்த்தசேது எப்படி செயல்படுகிறது", flow1: "விவரங்களை உள்ளிடவும்", flow2: "AI ஆய்வு", flow3: "திட்டம் மற்றும் EMI பெறவும்",
+    chatTitle: "AI உதவியாளரிடம் பேசுங்கள்", chatGreeting: "வணக்கம்! உங்கள் தொழில் யோசனையைக் கூறுங்கள்.", sendBtn: "அனுப்பு",
+    wizardTitle: "அல்லது விவரங்களை சேர்க்கவும்", q1: "1. பகுதி வகை", ruralBtn: "கிராமம்", urbanBtn: "நகரம்",
+    q2: "2. தொழில் வகை", catDairy: "பால் பண்ணை", catTailor: "தையல்", catGrocery: "மளிகை கடை",
+    q3: "3. மூலதனம் (₹)", calcBtn: "அறிக்கையை உருவாக்கவும்",
+    reportTitle: "நிதி அறிக்கை", downloadBtn: "பதிவிறக்கம் / அச்சு", errorServer: "சர்வரை இணைக்க முடியவில்லை.",
+    simInitialCash: "ஆரம்ப ரொக்கம் (₹)", simMonthlyRev: "மாத வருமானம் (₹)", simMonthlyExp: "மாத செலவு (₹)", simEmi: "மாத தவணை (₹)",
+    simulating: "செயல்முறை நடக்கிறது...", simResults: "முடிவுகள்", simSurvival: "வெற்றி வாய்ப்பு", simRisk: "ஆபத்து நிலை",
+    simTested: "சோதிக்கப்பட்டது", simCycles: "சந்தை சுழற்சிகளில்.", simFail: "இணைப்பு தோல்வி.",
+    navHome: "முகப்பு", navJournal: "குறிப்பேடு", navTools: "கருவிகள்", navChat: "சாட்"
+  },
+  te: { // Telugu
+    tagline: "సులభమైన మాటల్లో బిజినెస్ ఫండింగ్",
+    heroTitle: "మీ పొదుపును వ్యాపారంగా మార్చండి.",
+    heroSub: "మీ ప్రాంతం మరియు బడ్జెట్ తెలియజేయండి. ప్రభుత్వ పథకాలతో మ్యాచ్ చేస్తాము.",
+    flowTitle: "అర్థసేతు ఎలా పనిచేస్తుంది", flow1: "వివరాలు నమోదు చేయండి", flow2: "AI విశ్లేషణ", flow3: "పథకం & EMI పొందండి",
+    chatTitle: "AI సహాయకుడితో మాట్లాడండి", chatGreeting: "నమస్తే! మీ వ్యాపార ఆలోచనను చెప్పండి.", sendBtn: "పంపు",
+    wizardTitle: "లేదా నేరుగా నమోదు చేయండి", q1: "1. ప్రాంతం రకం", ruralBtn: "గ్రామీణ", urbanBtn: "పట్టణ",
+    q2: "2. వ్యాపార వర్గం", catDairy: "డైరీ ఫార్మింగ్", catTailor: "టైలరింగ్", catGrocery: "కిరాణా కొట్టు",
+    q3: "3. పెట్టుబడి (₹)", calcBtn: "AI రిపోర్ట్ పొందండి",
+    reportTitle: "వ్యాపార & ఆర్థిక నివేదిక", downloadBtn: "డౌన్‌లోడ్ / ప్రింట్", errorServer: "సర్వర్ కనెక్ట్ కాలేదు.",
+    simInitialCash: "ప్రారంభ నగదు (₹)", simMonthlyRev: "నెలకు ఆదాయం (₹)", simMonthlyExp: "నెలకు ఖర్చు (₹)", simEmi: "నెలకు EMI (₹)",
+    simulating: "సిమ్యులేషన్ జరుగుతోంది...", simResults: "ఫలితాలు", simSurvival: "విజయవంతమయ్యే అవకాశం", simRisk: "రిస్క్ స్థాయి",
+    simTested: "పరీక్షించబడింది", simCycles: "మార్కెట్ పరిస్థితులపై.", simFail: "కనెక్షన్ విఫలమైంది.",
+    navHome: "హోమ్", navJournal: "జర్నల్", navTools: "టూల్స్", navChat: "చాట్"
+  },
+  kn: { // Kannada
+    tagline: "ಸುಲಭ ಭಾಷೆಯಲ್ಲಿ ಉದ್ಯಮ ಧನಸಹಾಯ",
+    heroTitle: "ನಿಮ್ಮ ಉಳಿತಾಯವನ್ನು ಉದ್ಯಮ ಯೋಜನೆಯಾಗಿ ಮಾರ್ಪಡಿಸಿ.",
+    heroSub: "ನಿಮ್ಮ ಸ್ಥಳ ಮತ್ತು ಲಭ್ಯವಿರುವ ಹಣವನ್ನು ತಿಳಿಸಿ. ಸೂಕ್ತ ಯೋಜನೆಗಳನ್ನು ತಿಳಿಸುತ್ತೇವೆ.",
+    flowTitle: "ಅರ್ಥಸೇತು ಹೇಗೆ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ", flow1: "ವಿವರಗಳನ್ನು ನಮೂದಿಸಿ", flow2: "AI ಮಾರುಕಟ್ಟೆ ವಿಶ್ಲೇಷಣೆ", flow3: "ಯೋಜನೆ ಮತ್ತು EMI ಪಡೆಯಿರಿ",
+    chatTitle: "AI ಸಹಾಯಕರೊಂದಿಗೆ ಮಾತನಾಡಿ", chatGreeting: "ನಮಸ್ಕಾರ! ನಿಮ್ಮ ಉದ್ಯಮದ ಕಲ್ಪನೆಯನ್ನು ತಿಳಿಸಿ.", sendBtn: "ಕಳುಹಿಸಿ",
+    wizardTitle: "ಅಥವಾ ವಿವರಗಳನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ನಮೂದಿಸಿ", q1: "1. ಪ್ರದೇಶದ ಪ್ರಕಾರ", ruralBtn: "ಗ್ರಾಮೀಣ", urbanBtn: "ನಗರ",
+    q2: "2. ಉದ್ಯಮ ವರ್ಗ", catDairy: "ಡೈರಿ ಫಾರ್ಮಿಂಗ್", catTailor: "ದರ್ಜಿ ಕೆಲಸ", catGrocery: "ಕಿರಾಣಿ ಅಂಗಡಿ",
+    q3: "3. ನಿಮ್ಮ ಬಂಡವಾಳ (₹)", calcBtn: "ವರದಿ ಸಿದ್ಧಪಡಿಸಿ",
+    reportTitle: "ಆರ್ಥಿಕ ವರದಿ", downloadBtn: "ಡೌನ್‌ಲೋಡ್ / ಪ್ರಿಂಟ್", errorServer: "ಸರ್ವರ್ ಸಂಪರ್ಕ ವಿಫಲವಾಗಿದೆ.",
+    simInitialCash: "ಆರಂಭಿಕ ನಗದು (₹)", simMonthlyRev: "ಮಾಸಿಕ ಆದಾಯ (₹)", simMonthlyExp: "ಮಾಸಿಕ ವೆಚ್ಚ (₹)", simEmi: "ಮಾಸಿಕ EMI (₹)",
+    simulating: "ಸಿಮ್ಯುಲೇಶನ್ ಪ್ರಕ್ರಿಯೆಯಲ್ಲಿದೆ...", simResults: "ಫಲಿತಾಂಶಗಳು", simSurvival: "ಸಾಧ್ಯತೆಯ ಪ್ರಮಾಣ", simRisk: "ಅಪಾಯದ ಮಟ್ಟ",
+    simTested: "ಪರೀಕ್ಷಿಸಲಾಗಿದೆ", simCycles: "ಮಾರುಕಟ್ಟೆ ಸ್ಥಿತಿಗಳಲ್ಲಿ.", simFail: "ಸಂಪರ್ಕ ಸಾಧಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.",
+    navHome: "ಹೋಮ್", navJournal: "ಜರ್ನಲ್", navTools: "ಸಾಧನಗಳು", navChat: "ಚಾಟ್"
   }
 };
 
@@ -32,22 +160,42 @@ document.addEventListener("DOMContentLoaded", () => {
   setupLanguage();
   setupUI();
   setupVoice();
+  updateLanguage(currentLang);
 });
 
 function setupLanguage() {
   const langSelect = document.getElementById("langSelect");
-  langSelect.addEventListener("change", (e) => {
-    currentLang = e.target.value;
-    updateLanguage(currentLang);
-  });
+  if (langSelect) {
+    langSelect.addEventListener("change", (e) => {
+      currentLang = e.target.value;
+      updateLanguage(currentLang);
+    });
+  }
 }
 
 function updateLanguage(lang) {
+  const selectedDict = i18n[lang] || i18n['en'];
+  const fallbackDict = i18n['en'];
+
+  // Universal DOM translator with standard English fallback
   document.querySelectorAll("[data-i18n]").forEach(el => {
     const key = el.getAttribute("data-i18n");
-    if (i18n[lang] && i18n[lang][key]) {
-      if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.placeholder = i18n[lang][key];
-      else el.innerHTML = i18n[lang][key];
+    const translation = selectedDict[key] || fallbackDict[key];
+    if (translation) {
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.placeholder = translation;
+      } else {
+        el.innerHTML = translation;
+      }
+    }
+  });
+
+  // Dynamically sync placeholders for simulation inputs
+  const simInputs = ["simInitialCash", "simMonthlyRev", "simMonthlyExp", "simEmi"];
+  simInputs.forEach(id => {
+    const inputEl = document.getElementById(id);
+    if (inputEl) {
+      inputEl.placeholder = selectedDict[id] || fallbackDict[id] || "";
     }
   });
 }
@@ -60,30 +208,25 @@ function setupUI() {
     });
   });
 
-  document.getElementById("calcBtn").addEventListener("click", submitWizardToFastAPI);
-  document.getElementById("chatBtn").addEventListener("click", submitChatToFastAPI);
-  document.getElementById("downloadBtn").addEventListener("click", () => window.print());
+  document.getElementById("calcBtn")?.addEventListener("click", submitWizardToFastAPI);
+  document.getElementById("chatBtn")?.addEventListener("click", submitChatToFastAPI);
+  document.getElementById("downloadBtn")?.addEventListener("click", () => window.print());
   
-  // --- NEW: Read Aloud Event Listener ---
   const readBtn = document.getElementById("readAloudBtn");
   if(readBtn) readBtn.addEventListener("click", readReportAloud);
   
-  // --- NEW: Journal Event Listeners ---
   const logBtn = document.getElementById("logJournalBtn");
   if(logBtn) logBtn.addEventListener("click", submitJournalEntry);
   
   const askBtn = document.getElementById("askJournalBtn");
   if(askBtn) askBtn.addEventListener("click", askJournal);
 
-  // --- NEW: Journal Table Loader Listener ---
   const loadEntriesBtn = document.getElementById("loadEntriesBtn");
   if(loadEntriesBtn) loadEntriesBtn.addEventListener("click", fetchJournalEntries);
 
-  // Set today's date automatically in the journal form
   const dateEl = document.getElementById("journalDate");
   if(dateEl) dateEl.valueAsDate = new Date();
 
-  // --- NEW: Floating Chat Widget Toggle Logic ---
   const chatToggleBtn = document.getElementById("chatToggleBtn");
   const floatingChatWidget = document.getElementById("floatingChatWidget");
   const closeChatBtn = document.getElementById("closeChatBtn");
@@ -99,7 +242,8 @@ function setupUI() {
       chatToggleBtn.style.display = "flex";
     });
   }
- // --- AUTH MODAL & STATE LOGIC ---
+
+  // --- AUTH MODAL LOGIC ---
   const authModal = document.getElementById("authModal");
   const openAuthBtn = document.getElementById("openAuthModalBtn");
   const closeAuthBtn = document.getElementById("closeAuthModalBtn");
@@ -151,7 +295,8 @@ function setupUI() {
       });
     }
   }
-  // --- SIMULATION MODAL & ENGINE LOGIC ---
+
+  // --- SIMULATION ENGINE LOGIC ---
   const openSimBtn = document.getElementById("openSimModalBtn");
   const simModal = document.getElementById("simModalOverlay");
   const closeSimBtn = document.getElementById("closeSimModalBtn");
@@ -173,8 +318,10 @@ function setupUI() {
       };
 
       const resultBox = document.getElementById("simulationResult");
+      const activeDict = i18n[currentLang] || i18n['en'];
+      
       resultBox.style.display = "block";
-      resultBox.innerHTML = "<em>Simulating 1,000 market conditions...</em>";
+      resultBox.innerHTML = `<em>${activeDict.simulating}</em>`;
 
       try {
         const response = await fetch(`${API_BASE_URL}/simulate/survival`, {
@@ -187,18 +334,18 @@ function setupUI() {
         let badgeColor = data.survival_probability_pct > 80 ? '#10B981' : (data.survival_probability_pct > 50 ? '#F59E0B' : '#EF4444');
 
         resultBox.innerHTML = `
-          <h4 style="margin: 0 0 8px 0; color: #1E293B;">Simulation Results</h4>
-          <p style="margin: 4px 0;">Survival Probability: <strong style="color: ${badgeColor}; font-size: 16px;">${data.survival_probability_pct}%</strong></p>
-          <p style="margin: 4px 0;">Risk Level: <strong>${data.risk_level}</strong></p>
-          <p style="font-size: 12px; color: var(--text-light); margin-top: 6px;">Tested across ${data.simulated_iterations} randomized seasonal demand cycles.</p>
+          <h4 style="margin: 0 0 8px 0; color: #1E293B;">${activeDict.simResults}</h4>
+          <p style="margin: 4px 0;">${activeDict.simSurvival}: <strong style="color: ${badgeColor}; font-size: 16px;">${data.survival_probability_pct}%</strong></p>
+          <p style="margin: 4px 0;">${activeDict.simRisk}: <strong>${data.risk_level}</strong></p>
+          <p style="font-size: 12px; color: var(--text-light); margin-top: 6px;">${activeDict.simTested} ${data.simulated_iterations} ${activeDict.simCycles}</p>
         `;
       } catch (e) {
-        resultBox.innerHTML = `<span style="color:red">Simulation engine failed to connect. Ensure backend is running.</span>`;
+        resultBox.innerHTML = `<span style="color:red">${activeDict.simFail}</span>`;
       }
     });
   }
 
-  // --- SCENARIO COMPARISON & SENSITIVITY LOGIC ---
+  // --- SCENARIO COMPARISON LOGIC ---
   const compareBtn = document.getElementById("compareScenariosBtn");
   if (compareBtn) {
     compareBtn.addEventListener("click", async () => {
@@ -240,8 +387,6 @@ function setupUI() {
       }
     });
   }
-
-  
 }
 
 function setupVoice() {
@@ -249,16 +394,18 @@ function setupVoice() {
   const chatInput = document.getElementById("chatInput");
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
-    voiceBtn.style.display = 'none';
+    if(voiceBtn) voiceBtn.style.display = 'none';
     return;
   }
   const recognition = new SpeechRecognition();
   recognition.continuous = false;
+  
   voiceBtn.addEventListener("click", () => {
-    recognition.lang = currentLang === 'en' ? 'en-IN' : 'hi-IN'; 
+    recognition.lang = langVoiceMap[currentLang] || 'en-IN'; 
     recognition.start();
     voiceBtn.classList.add("listening");
   });
+  
   recognition.onresult = (event) => {
     chatInput.value = event.results[0][0].transcript;
     voiceBtn.classList.remove("listening");
@@ -281,7 +428,6 @@ async function submitWizardToFastAPI() {
   const marginCapital = parseFloat(document.getElementById("marginInput").value);
   const category = document.getElementById("categorySelect").value;
   
-  // Grabbing personal and granular location details if present
   const stateInput = document.getElementById("stateInput");
   const districtInput = document.getElementById("districtInput");
   const stateVal = stateInput ? stateInput.value.trim() : "";
@@ -329,7 +475,8 @@ async function submitChatToFastAPI() {
     renderReport(data);
 
   } catch (err) {
-    appendChatBubble(i18n[currentLang].errorServer, "ai");
+    const activeDict = i18n[currentLang] || i18n['en'];
+    appendChatBubble(activeDict.errorServer, "ai");
   }
 }
 
@@ -373,7 +520,6 @@ function renderReport(data) {
   const loanAmount = data.loan?.loan_amount || 0;
   const emi = data.installment || 0;
   
-  // ORIGINAL SWOT RENDERER
   let swotHTML = "";
   if (data.swot) {
       let swotContent = typeof data.swot === 'string' ? data.swot.replace(/\n/g, '<br>') : `
@@ -390,7 +536,6 @@ function renderReport(data) {
       `;
   }
 
-  // --- NEW: COMPETITOR MAPPING RENDERER ---
   let competitorHTML = "";
   if (data.competitor_mapping && data.competitor_mapping.nearest && data.competitor_mapping.nearest.length > 0) {
     competitorHTML = `
@@ -423,7 +568,7 @@ function renderReport(data) {
 }
 
 // ==========================================
-// --- NEW: BUSINESS JOURNAL LOGIC ---
+// --- BUSINESS JOURNAL LOGIC ---
 // ==========================================
 
 async function submitJournalEntry() {
@@ -520,21 +665,20 @@ async function fetchJournalEntries() {
   }
 }
 
-// --- NEW: READ ALOUD LOGIC ---
+// --- DYNAMIC READ ALOUD LOGIC ---
 function readReportAloud() {
-  const content = document.getElementById("resultContent").innerText;
+  const content = document.getElementById("resultContent")?.innerText;
   if (!content) return alert("No report to read yet!");
 
-  // Stop any currently playing audio
   window.speechSynthesis.cancel();
 
   const utterance = new SpeechSynthesisUtterance(content);
-  // Matches the language to the current UI selection (English or Hindi)
-  utterance.lang = currentLang === 'en' ? 'en-IN' : 'hi-IN';
-  utterance.rate = 0.9; // Slightly slower for easier understanding
+  utterance.lang = langVoiceMap[currentLang] || 'en-IN';
+  utterance.rate = 0.9;
   
   window.speechSynthesis.speak(utterance);
 }
+
 // --- MAP RENDERER FOR COMPETITORS ---
 let competitorMap = null;
 
@@ -542,13 +686,9 @@ function renderCompetitorMap(competitors) {
   const mapContainerId = "competitorMapDiv";
   let mapDiv = document.getElementById(mapContainerId);
   
-  if (!mapDiv) {
-    return;
-  }
+  if (!mapDiv) return;
 
-  if (competitorMap) {
-    competitorMap.remove();
-  }
+  if (competitorMap) competitorMap.remove();
 
   const defaultLat = 20.5937; 
   const defaultLon = 78.9629;
@@ -578,11 +718,8 @@ function renderCompetitorMap(competitors) {
 }
 
 // ==========================================
-// --- BOTTOM NAV (additive UI only — no backend wiring touched) ---
+// --- BOTTOM NAV NAVIGATION ---
 // ==========================================
-
-if (i18n.en) Object.assign(i18n.en, { navHome: "Home", navJournal: "Journal", navTools: "Tools", navChat: "Chat" });
-if (i18n.hi) Object.assign(i18n.hi, { navHome: "होम", navJournal: "जर्नल", navTools: "टूल्स", navChat: "चैट" });
 
 document.addEventListener("DOMContentLoaded", () => {
   const navItems = document.querySelectorAll(".nav-item[data-view]");
