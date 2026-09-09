@@ -524,12 +524,23 @@ function setupVoice() {
   recognition.onend = () => { if (voiceBtn) voiceBtn.classList.remove("listening"); };
 }
 
+function formatMarkdownToHTML(text) {
+
+  const escaped = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  return escaped
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")  
+    .replace(/\n/g, "<br>");                            
+}
+
 function appendChatBubble(text, sender) {
   const history = document.getElementById("chatHistory");
-  if (!history) return;
   const bubble = document.createElement("div");
   bubble.className = `chat-bubble ${sender}`;
-  bubble.textContent = text;
+  bubble.innerHTML = formatMarkdownToHTML(text);
   history.appendChild(bubble);
   history.scrollTop = history.scrollHeight;
 }
